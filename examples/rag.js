@@ -6,29 +6,31 @@ import { RetrievalQAChain, loadQAStuffChain } from "langchain/chains";
 import { YoutubeLoader } from "langchain/document_loaders/web/youtube";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 
-// Create a vector store that will store the embeddings of the documents
-const pgOptions = {
-	postgresConnectionOptions: {
-		connectionString: process.env.DATABASE_URL,
-		ssl: {
-			rejectUnauthorized: false,
+async function setupPgVector() {
+	// Create a vector store that will store the embeddings of the documents
+	const pgOptions = {
+		postgresConnectionOptions: {
+			connectionString: process.env.DATABASE_URL,
+			ssl: {
+				rejectUnauthorized: false,
+			},
 		},
-	},
-	tableName: "video_embeddings",
-	columns: {
-		idColumnName: "id",
-		vectorColumnName: "vector",
-		contentColumnName: "content",
-		metadataColumnName: "metadata",
-	},
-};
+		tableName: "video_embeddings",
+		columns: {
+			idColumnName: "id",
+			vectorColumnName: "vector",
+			contentColumnName: "content",
+			metadataColumnName: "metadata",
+		},
+	};
 
-const pgVectorStore = await PGVectorStore.initialize(
-	new OpenAIEmbeddings(),
-	pgOptions,
-);
+	const pgVectorStore = await PGVectorStore.initialize(
+		new OpenAIEmbeddings(),
+		pgOptions,
+	);
 
-const retriever = pgVectorStore.asRetriever();
+	return pgVectorStore;
+}
 
 // Load the video transcript and store it in the vector store
 export async function loadVideo(url) {
@@ -46,6 +48,9 @@ export async function loadVideo(url) {
 
 	// Split the documents into chunks of 1000 characters
 	const texts = await splitter.splitDocuments(docs);
+
+	const pgVectorStore = await setupPgVector();
+
 	pgVectorStore.addDocuments(texts);
 }
 
@@ -68,6 +73,9 @@ Answer:`;
 		inputVariables: ["context", "question"],
 		template,
 	});
+
+	const pgVectorStore = await setupPgVector();
+	const retriever = pgVectorStore.asRetriever();
 
 	// Create a retrieval QA chain that will combine the documents, the retriever and the chat model
 	const chain = new RetrievalQAChain({

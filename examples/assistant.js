@@ -3,14 +3,14 @@ import OpenAI from "openai";
 
 const openai = new OpenAI(process.env.OPENAI_API_KEY);
 
-const assistant = await openai.beta.assistants.create({
-	name: "Unit Conversion",
-	instructions: "Convert units of measurement",
-	tools: [{ type: "code_interpreter" }],
-	model: "gpt-3.5-turbo-1106",
-});
-
 export async function assistantQuestion(question) {
+	const assistant = await openai.beta.assistants.create({
+		name: "Unit Conversion",
+		instructions: "Convert units of measurement",
+		tools: [{ type: "code_interpreter" }],
+		model: "gpt-3.5-turbo-1106",
+	});
+
 	const thread = await openai.beta.threads.create();
 	await openai.beta.threads.messages.create(thread.id, {
 		role: "user",
