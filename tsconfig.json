@@ -1,5 +1,5 @@
 {
-  "include": ["**/*.ts", "**/*.tsx", "server.js"],
+  "include": ["**/*.ts", "**/*.tsx", "server.js", "examples/rag.js", "examples/assistant.js", "examples/agent.js"],
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ES2022"],
     "types": ["@remix-run/node", "node", "vite/client"],
@@ -16,7 +16,8 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./app/*"]
+      "@/*": ["./app/*"],
+      "~/*": ["./examples/*"],
     },
 
     // Vite takes care of building everything, not tsc.

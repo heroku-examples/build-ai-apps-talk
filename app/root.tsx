@@ -16,6 +16,7 @@ import {
 } from "@/components/theme-switcher";
 
 import "./globals.css";
+import "./prism-vs.css";
 
 function App({ children }: { children: React.ReactNode }) {
 	return (
