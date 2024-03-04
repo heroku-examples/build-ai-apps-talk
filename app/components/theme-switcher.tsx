@@ -51,7 +51,7 @@ export function ThemeSwitcherScript() {
 
 export function getTheme() {
 	return validateTheme(
-		typeof document === "undefined" ? "system" : localStorage.getItem("theme"),
+		typeof document === "undefined" ? "light" : localStorage.getItem("theme"),
 	);
 }
 
@@ -63,7 +63,7 @@ export function toggleTheme() {
 	let currentTheme = validateTheme(localStorage.getItem("theme"));
 	if (currentTheme === "system") {
 		currentTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
-			? "dark"
+			? "light"
 			: "light";
 	}
 	const newTheme = currentTheme === "light" ? "dark" : "light";
@@ -88,5 +88,5 @@ export function setTheme(theme: Theme | string) {
 function validateTheme(theme: string | null): Theme {
 	return theme === "light" || theme === "dark" || theme === "system"
 		? theme
-		: "system";
+		: "light";
 }

@@ -65,12 +65,8 @@
 @layer base {
   :root {
     --theme-light: initial;
-    color-scheme: light;
-  }
-
-  [data-theme="light"] {
-    --theme-light: initial;
-    color-scheme: light;
+    --theme-dark: ;
+    color-scheme: light dark;
   }
 }
 
