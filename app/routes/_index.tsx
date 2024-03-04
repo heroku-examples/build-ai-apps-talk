@@ -6,7 +6,7 @@ import { title } from "@/config.shared";
 import type { MetaFunction } from "@remix-run/node";
 
 export const meta: MetaFunction = () => {
-	return [{ title: title() }, { name: "description", content: "AI Patterns" }];
+	return [{ title: `${title()} - AI Patterns` }, { name: "description", content: "AI Patterns" }];
 };
 
 export default function Index() {

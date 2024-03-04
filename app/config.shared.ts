@@ -1,4 +1,4 @@
-export const APP_NAME = "AI Patterns Examples";
+export const APP_NAME = "Building AI Applications on Heroku";
 
 export function title(pageTitle?: string) {
 	if (!pageTitle) return APP_NAME;
