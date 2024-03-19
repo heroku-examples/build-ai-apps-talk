@@ -37,6 +37,12 @@ export default function Resources() {
           <li>
             <a href="https://blog.heroku.com/pgvector-for-similarity-search-on-heroku-postgres">How to Use pgvector for Similarity Search on Heroku Postgres</a>
           </li>
+          <li>
+            <a href="https://github.com/heroku/buildpacks">Heroku Cloud Native Buildpacks</a>
+          </li>
+          <li>
+            <a href="https://github.com/Malax/buildpack-ollama/">Ollama Cloud Native Buildpack</a>
+          </li>
         </ul>
       </div>
     </main>
