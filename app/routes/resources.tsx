@@ -5,7 +5,7 @@ export const meta: MetaFunction = () => {
     { title: `${title()} - Learning Resources` },
     {
       name: "description",
-      content: "mv Learning Resources",
+      content: "Learning Resources",
     },
   ];
 };
@@ -27,6 +27,9 @@ export default function Resources() {
           </li>
           <li>
             <a href="https://github.com/heroku-reference-apps/ask-pdf">Ask PDF - Retrieval-Augmented Generation with pgvector</a>
+          </li>
+          <li>
+            <a href="https://github.com/heroku-reference-apps/moodflicks">Moodflicks - MongoDB Atlas Vector Search with a React UI</a>
           </li>
           <li>
             <a href="https://blog.heroku.com/working-with-chatgpt-functions-on-heroku">Working with ChatGPT Functions on Heroku</a>
