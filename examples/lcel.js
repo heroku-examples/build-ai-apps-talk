@@ -1,7 +1,6 @@
 import "dotenv/config";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
-import { RunnableSequence } from "@langchain/core/runnables";
 import { ChatOpenAI } from "@langchain/openai";
 
 // Create an instance of a chat model
@@ -29,14 +28,14 @@ export async function generateCode({ language, problem }) {
 }
 
 // Example of composing Runnables with RunnableSequence
-const chain2 = RunnableSequence.from([
-	promptTemplate,
-	llm,
-	new StringOutputParser(),
-]);
+// const chain2 = RunnableSequence.from([
+// 	promptTemplate,
+// 	llm,
+// 	new StringOutputParser(),
+// ]);
 
-const output2 = await chain2.invoke({
-	language: "Elixir",
-	problem: "reverse a string",
-});
-console.log(output2);
+// const output2 = await chain2.invoke({
+// 	language: "Elixir",
+// 	problem: "reverse a string",
+// });
+// console.log(output2);
