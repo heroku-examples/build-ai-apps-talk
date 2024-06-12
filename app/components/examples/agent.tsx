@@ -28,10 +28,12 @@ export function Agent() {
 	}, [output]);
 
 	return (
-		<Card className="w-[800px]">
+		<Card className="w-[1200px]">
 			<CardHeader>
-				<CardTitle>Weather Agent</CardTitle>
-				<CardDescription>Ask about the weather by city</CardDescription>
+				<CardTitle>Chat Agent with Tool usage</CardTitle>
+				<CardDescription>
+					Ask about Wikipedia facts and current weather information
+				</CardDescription>
 			</CardHeader>
 			<CardContent>
 				<fetcher.Form method="post" action="/examples">
@@ -39,7 +41,7 @@ export function Agent() {
 					<Input
 						type="text"
 						name="question"
-						placeholder="What is the weather in London?"
+						placeholder="What is the current weather in Atlanta?"
 						onKeyDown={(e) => {
 							const keyCode = e.which || e.keyCode;
 							if (keyCode === 13) {
@@ -53,24 +55,27 @@ export function Agent() {
 				{isSubmitting && <p>Thinking...</p>}
 				{answer && <p>{answer}</p>}
 				<Highlight language="js">
-					{`import { ChatOpenAI } from "@langchain/openai";
+					{`import "dotenv/config";
+import { ChatOpenAI } from "@langchain/openai";
 import { DynamicTool } from "@langchain/core/tools";
-import {
-  ChatPromptTemplate,
-  MessagesPlaceholder,
-} from "@langchain/core/prompts";
-import { convertToOpenAIFunction } from "@langchain/core/utils/function_calling";
-import { RunnableSequence } from "@langchain/core/runnables";
 import { AgentExecutor } from "langchain/agents";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { WikipediaQueryRun } from "@langchain/community/tools/wikipedia_query_run";
+import { createToolCallingAgent } from "langchain/agents";
 
-import { formatToOpenAIFunctionMessages } from "langchain/agents/format_scratchpad";
-import { OpenAIFunctionsAgentOutputParser } from "langchain/agents/openai/output_parser";
-
-const model = new ChatOpenAI({
-  modelName: "gpt-3.5-turbo-1106",
+// Create an instance of a chat model
+const llm = new ChatOpenAI({
+  modelName: "gpt-3.5-turbo-0125",
   temperature: 0,
 });
 
+// Create a tool to query Wikipedia
+const wikipediaTool = new WikipediaQueryRun({
+  topKResults: 1,
+  maxDocContentLength: 6000,
+});
+
+// Create a custom tool to get the weather
 const weatherTool = new DynamicTool({
   name: "get_weather",
   description: "Get the weather by city",
@@ -83,35 +88,31 @@ const weatherTool = new DynamicTool({
   },
 });
 
-const tools = [weatherTool];
+const tools = [weatherTool, wikipediaTool];
 
 const prompt = ChatPromptTemplate.fromMessages([
-  ["system", "You are an assistant who knows about the weather."],
+  [
+    "system",
+    "You are an assistant who knows about the weather and facts from Wikipedia",
+  ],
   ["human", "{input}"],
-  new MessagesPlaceholder("agent_scratchpad"),
+  ["placeholder", "{agent_scratchpad}"],
 ]);
 
-const modelWithFunctions = model.bind({
-  functions: tools.map((tool) => convertToOpenAIFunction(tool)),
+// Create an agent with the LLM, tools, and prompt
+const agent = createToolCallingAgent({
+  llm,
+  tools,
+  prompt,
 });
 
-const runnableAgent = RunnableSequence.from([
-  {
-    input: (i) => i.input,
-    agent_scratchpad: (i) => formatToOpenAIFunctionMessages(i.steps),
-  },
-  prompt,
-  modelWithFunctions,
-  new OpenAIFunctionsAgentOutputParser(),
-]);
-
-const executor = AgentExecutor.fromAgentAndTools({
-  agent: runnableAgent,
+const executor = new AgentExecutor({
+  agent,
   tools,
 });
 
+// Call the agent executor with a query
 export async function agentQuestion(input) {
-  console.log(\`Calling agent executor with query: \${input}\`);
   return executor.invoke({ input });
 }
 `}

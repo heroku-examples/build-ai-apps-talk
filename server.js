@@ -13,7 +13,7 @@ const viteDevServer =
 				vite.createServer({
 					server: { middlewareMode: true },
 				}),
-		  );
+			);
 
 // Create a request handler for Remix
 const remixHandler = createRequestHandler({

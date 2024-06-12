@@ -1,20 +1,26 @@
-import { PGVectorStore } from "@langchain/community/vectorstores/pgvector";
-import { PromptTemplate } from "@langchain/core/prompts";
-import { ChatOpenAI, OpenAIEmbeddings } from "@langchain/openai";
 import "dotenv/config";
-import { RetrievalQAChain, loadQAStuffChain } from "langchain/chains";
-import { YoutubeLoader } from "langchain/document_loaders/web/youtube";
+import { YoutubeLoader } from "@langchain/community/document_loaders/web/youtube";
+import { PGVectorStore } from "@langchain/community/vectorstores/pgvector";
+import { StringOutputParser } from "@langchain/core/output_parsers";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { ChatOpenAI, OpenAIEmbeddings } from "@langchain/openai";
+import { createStuffDocumentsChain } from "langchain/chains/combine_documents";
+import { createRetrievalChain } from "langchain/chains/retrieval";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
+import pg from "pg";
+
+const { Pool } = pg;
+const pool = new Pool({
+	connectionString: process.env.DATABASE_URL,
+	ssl: {
+		rejectUnauthorized: false,
+	},
+});
 
 async function setupPgVector() {
 	// Create a vector store that will store the embeddings of the documents
 	const pgOptions = {
-		postgresConnectionOptions: {
-			connectionString: process.env.DATABASE_URL,
-			ssl: {
-				rejectUnauthorized: false,
-			},
-		},
+		pool,
 		tableName: "video_embeddings",
 		columns: {
 			idColumnName: "id",
@@ -37,8 +43,34 @@ export async function loadVideo(url) {
 	// Load the video transcript
 	const loader = YoutubeLoader.createFromUrl(url, {
 		language: "en",
+		addVideoInfo: true,
 	});
 	const docs = await loader.load();
+
+	// Get video metadata
+	const { title, description, source } = docs[0].metadata;
+
+	const embedUrl = `https://www.youtube.com/embed/${source}`;
+
+	// Check if the video already exists in the database
+	const videoExists = await pool.query(
+		"SELECT id FROM videos WHERE source = $1",
+		[source],
+	);
+
+	// Video already exists, don't vectorize it, just return the embed URL
+	if (videoExists.rows.length > 0) {
+		return {
+			url: embedUrl,
+			source,
+		};
+	}
+
+	// Insert the video metadata into the database
+	await pool.query(
+		"INSERT INTO videos (title, description, source) VALUES ($1, $2, $3) RETURNING id",
+		[title, description, source],
+	);
 
 	// Create a text transformer that will split the text into chunks of 1000 characters
 	const splitter = new RecursiveCharacterTextSplitter({
@@ -49,43 +81,51 @@ export async function loadVideo(url) {
 	// Split the documents into chunks of 1000 characters
 	const texts = await splitter.splitDocuments(docs);
 
+	// Vectorize video transcript
 	const pgVectorStore = await setupPgVector();
 
 	pgVectorStore.addDocuments(texts);
+	return {
+		url: embedUrl,
+		source,
+	};
 }
 
 // Ask a question to the video transcript
-export async function askQuestion(question) {
+export async function askQuestion({ question, source }) {
 	// Create a chat model that will be used to answer the questions
-	const model = new ChatOpenAI({
-		model: "gpt-3.5-turbo-1106",
+	const llm = new ChatOpenAI({
+		model: "gpt-3.5-turbo-0125",
 	});
 
 	// Create a prompt template that will be used to format the questions
-	const template = `You will answer to questions only based on the following context, which is part of a YouTube video transcript, you will use a friendly language, if you don't know the answer don't try to guess, simply say. I don't know
+	const template = `You will answer to questions only based on the context provided, which is part of a YouTube video transcript.
+		You will use a friendly language and if you don't know the answer don't try to guess, simply say. Sorry, I don't know the answer.
 ----
-{context}
+Context: {context}
 ----
-Question: {question}
-Answer:`;
-
-	const QA_CHAIN_PROMPT = new PromptTemplate({
-		inputVariables: ["context", "question"],
-		template,
-	});
+Question: {input}`;
 
 	const pgVectorStore = await setupPgVector();
-	const retriever = pgVectorStore.asRetriever();
 
-	// Create a retrieval QA chain that will combine the documents, the retriever and the chat model
-	const chain = new RetrievalQAChain({
-		combineDocumentsChain: loadQAStuffChain(model, { prompt: QA_CHAIN_PROMPT }),
+	const prompt = ChatPromptTemplate.fromTemplate(template);
+	const retriever = pgVectorStore.asRetriever(8, {
+		source,
+	});
+	const outputParser = new StringOutputParser();
+
+	const combineDocsChain = await createStuffDocumentsChain({
+		llm,
+		prompt,
+		outputParser,
+	});
+
+	const chain = await createRetrievalChain({
 		retriever,
-		returnSourceDocuments: true,
-		inputKey: "question",
+		combineDocsChain,
 	});
 
 	// Ask a question
-	const query = await chain.invoke({ question });
-	return query.text;
+	const query = await chain.invoke({ input: question });
+	return query.answer;
 }

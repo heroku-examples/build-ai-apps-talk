@@ -7,7 +7,7 @@ export function Header() {
 				<Link className="flex items-center space-x-2" to="/">
 					<img src="/logo.png" alt="Heroku" className="w-12 h-12" />
 					<span className="text-lg font-bold">
-						Build AI Applications on Heroku
+						Build AI Applications with Node and LangChain
 					</span>
 				</Link>
 			</div>
