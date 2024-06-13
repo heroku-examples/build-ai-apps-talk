@@ -31,8 +31,10 @@ const weatherTool = new DynamicTool({
 	},
 });
 
+// Create a list of tools
 const tools = [weatherTool, wikipediaTool];
 
+// Create a prompt template with a placeholder for the agent's scratchpad
 const prompt = ChatPromptTemplate.fromMessages([
 	[
 		"system",
@@ -49,6 +51,7 @@ const agent = createToolCallingAgent({
 	prompt,
 });
 
+// Create an agent executor with the agent and tools
 const executor = new AgentExecutor({
 	agent,
 	tools,

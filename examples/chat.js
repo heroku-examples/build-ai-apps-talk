@@ -8,20 +8,26 @@ import {
 import { RunnableWithMessageHistory } from "@langchain/core/runnables";
 import { ChatOpenAI } from "@langchain/openai";
 
+// Instantiate the chat model
 const llm = new ChatOpenAI({
 	modelName: "gpt-3.5-turbo-0125",
 	temperature: 0,
 });
 
+// Create a prompt template with a placeholder for the chat history
 const prompt = ChatPromptTemplate.fromMessages([
 	["system", "You are an assistant who is good at {skill}."],
 	new MessagesPlaceholder("history"),
 	["human", "{message}"],
 ]);
 
+// Create a documents chain with the LLM, prompt, and output parser
 const chain = prompt.pipe(llm).pipe(new StringOutputParser());
+
+// Create an in-memory store for the chat history
 const messageHistory = new ChatMessageHistory();
 
+// Create a runnable with the chain and the chat history
 const chainWithHistory = new RunnableWithMessageHistory({
 	runnable: chain,
 	getMessageHistory: () => messageHistory,
@@ -29,6 +35,7 @@ const chainWithHistory = new RunnableWithMessageHistory({
 	historyMessagesKey: "history",
 });
 
+// Ask a question to the assistant
 export async function assistantQuestion({ skill, message }) {
 	return chainWithHistory.invoke(
 		{
@@ -37,7 +44,7 @@ export async function assistantQuestion({ skill, message }) {
 		},
 		{
 			configurable: {
-				sessionId: "assistant",
+				sessionId: "assistant", // needed in case you are using a memory store like Redis
 			},
 		},
 	);

@@ -17,6 +17,7 @@ const pool = new Pool({
 	},
 });
 
+// Setup the vector store with pgvector
 async function setupPgVector() {
 	// Create a vector store that will store the embeddings of the documents
 	const pgOptions = {
@@ -84,6 +85,7 @@ export async function loadVideo(url) {
 	// Vectorize video transcript
 	const pgVectorStore = await setupPgVector();
 
+	// Add the video transcript documents to the vector store
 	pgVectorStore.addDocuments(texts);
 	return {
 		url: embedUrl,
@@ -106,20 +108,23 @@ Context: {context}
 ----
 Question: {input}`;
 
-	const pgVectorStore = await setupPgVector();
-
 	const prompt = ChatPromptTemplate.fromTemplate(template);
+
+	// Setup the vector database with pgvector
+	const pgVectorStore = await setupPgVector();
 	const retriever = pgVectorStore.asRetriever(8, {
 		source,
 	});
 	const outputParser = new StringOutputParser();
 
+	// Create a documents chain with the LLM, prompt, and output parser
 	const combineDocsChain = await createStuffDocumentsChain({
 		llm,
 		prompt,
 		outputParser,
 	});
 
+	// Create a retrieval chain with the retriever and the documents chain
 	const chain = await createRetrievalChain({
 		retriever,
 		combineDocsChain,
