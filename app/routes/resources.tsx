@@ -71,6 +71,11 @@ export default function Resources() {
               LLM App Stack aka Emerging Architectures for LLM Applications
             </a>
           </li>
+          <li>
+            <a href="https://github.com/heroku-examples/build-ai-apps-talk">
+              Source code for this app - Build AI Apps with LangChain and node
+            </a>
+          </li>
         </ul>
       </div>
     </main>
