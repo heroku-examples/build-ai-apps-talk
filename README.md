@@ -42,6 +42,12 @@ Setup the schema
 heroku pg:psql -f data/schema.sql
 ```
 
+Setup the environment variables on Heroku
+
+```shell
+heroku config:set CONFIG_VAR=value
+```
+
 Deploy to Heroku!
 
 ```shell
