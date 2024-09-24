@@ -1,84 +1,84 @@
 import { Highlight } from "@/components/hightlight/hightlight";
 import { Button } from "@/components/ui/button";
 import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useFetcher } from "@remix-run/react";
 import { useEffect, useState } from "react";
 
 interface Answer {
-	output: string;
+  output: string;
 }
 
 export function LCEL() {
-	const fetcher = useFetcher<Answer>();
-	const [answer, setAnswer] = useState("");
+  const fetcher = useFetcher<Answer>();
+  const [answer, setAnswer] = useState("");
 
-	const isSubmitting = fetcher.state === "submitting";
-	const output = fetcher.data?.output;
+  const isSubmitting = fetcher.state === "submitting";
+  const output = fetcher.data?.output;
 
-	useEffect(() => {
-		if (output) {
-			setAnswer(output);
-		}
-	}, [output]);
+  useEffect(() => {
+    if (output) {
+      setAnswer(output);
+    }
+  }, [output]);
 
-	return (
-		<Card className="w-[1200px]">
-			<CardHeader>
-				<CardTitle>LCEL: LangChain Expression Language</CardTitle>
-				<CardDescription>
-					Generate code for a use case in a specified language
-				</CardDescription>
-			</CardHeader>
-			<CardContent>
-				<fetcher.Form method="post" action="/examples">
-					<Input type="hidden" name="example" value="lcel" />
-					<div className="flex space-x-4">
-						<Input
-							type="text"
-							name="language"
-							placeholder="JavaScript"
-							className="w-1/12 p-2"
-						/>
-						<Input
-							type="text"
-							name="problem"
-							placeholder="Reverse a string"
-							className="flex-grow p-2"
-						/>
-					</div>
-					<Button
-						className="my-2"
-						onClick={(e) => {
-							fetcher.submit(e.currentTarget.form, {
-								method: "POST",
-							});
-						}}
-					>
-						Generate Code
-					</Button>
-				</fetcher.Form>
-				{isSubmitting && <p>Thinking...</p>}
-				{answer && (
-					<pre className="overflow-auto bg-white rounded border border-gray-200">
-						{answer}
-					</pre>
-				)}
-				<Highlight language="js">
-					{`import { ChatOpenAI } from "@langchain/openai";
+  return (
+    <Card className="w-[1200px]">
+      <CardHeader>
+        <CardTitle>LCEL: LangChain Expression Language</CardTitle>
+        <CardDescription>
+          Generate code for a use case in a specified language
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <fetcher.Form method="post" action="/examples">
+          <Input type="hidden" name="example" value="lcel" />
+          <div className="flex space-x-4">
+            <Input
+              type="text"
+              name="language"
+              placeholder="JavaScript"
+              className="w-1/12 p-2"
+            />
+            <Input
+              type="text"
+              name="problem"
+              placeholder="Reverse a string"
+              className="flex-grow p-2"
+            />
+          </div>
+          <Button
+            className="my-2"
+            onClick={(e) => {
+              fetcher.submit(e.currentTarget.form, {
+                method: "POST",
+              });
+            }}
+          >
+            Generate Code
+          </Button>
+        </fetcher.Form>
+        {isSubmitting && <p>Thinking...</p>}
+        {answer && (
+          <pre className="overflow-auto bg-white rounded border border-gray-200">
+            {answer}
+          </pre>
+        )}
+        <Highlight language="js">
+          {`import { ChatOpenAI } from "@langchain/openai";
 import { RunnableSequence } from "@langchain/core/runnables";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 
 // Create an instance of a chat model
 const llm = new ChatOpenAI({
-  modelName: "gpt-3.5-turbo-0125",
+  model: "gpt-4o-mini",
   temperature: 0,
 });
 
@@ -113,8 +113,8 @@ const output2 = await chain2.invoke({
 });
 console.log(output2);
 `}
-				</Highlight>
-			</CardContent>
-		</Card>
-	);
+        </Highlight>
+      </CardContent>
+    </Card>
+  );
 }

@@ -1,71 +1,71 @@
 import { Highlight } from "@/components/hightlight/hightlight";
 import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useFetcher } from "@remix-run/react";
 import { useEffect, useState } from "react";
 
 interface Answer {
-	output: string;
+  output: string;
 }
 
 export function Structured() {
-	const fetcher = useFetcher<Answer>();
-	const [answer, setAnswer] = useState("");
+  const fetcher = useFetcher<Answer>();
+  const [answer, setAnswer] = useState("");
 
-	const isSubmitting = fetcher.state === "submitting";
-	const output = fetcher.data?.output;
+  const isSubmitting = fetcher.state === "submitting";
+  const output = fetcher.data?.output;
 
-	useEffect(() => {
-		if (output) {
-			setAnswer(output);
-		}
-	}, [output]);
+  useEffect(() => {
+    if (output) {
+      setAnswer(output);
+    }
+  }, [output]);
 
-	return (
-		<Card className="w-[1200px]">
-			<CardHeader>
-				<CardTitle>Structured Output</CardTitle>
-				<CardDescription>
-					Provide a list of ingredients and get a delicious recipe
-				</CardDescription>
-			</CardHeader>
-			<CardContent>
-				<fetcher.Form method="post" action="/examples">
-					<Input type="hidden" name="example" value="structured" />
-					<Input
-						type="text"
-						name="ingredients"
-						placeholder="Peach, Flour, Eggs, Sugar"
-						onKeyDown={(e) => {
-							const keyCode = e.which || e.keyCode;
-							if (keyCode === 13) {
-								fetcher.submit(e.currentTarget.form, {
-									method: "POST",
-								});
-							}
-						}}
-					/>
-				</fetcher.Form>
-				{isSubmitting && <p>Thinking...</p>}
-				{answer && (
-					<pre className="overflow-auto bg-white rounded border border-gray-200">
-						{answer}
-					</pre>
-				)}
-				<Highlight language="js">
-					{`import { ChatOpenAI } from "@langchain/openai";
+  return (
+    <Card className="w-[1200px]">
+      <CardHeader>
+        <CardTitle>Structured Output</CardTitle>
+        <CardDescription>
+          Provide a list of ingredients and get a delicious recipe
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <fetcher.Form method="post" action="/examples">
+          <Input type="hidden" name="example" value="structured" />
+          <Input
+            type="text"
+            name="ingredients"
+            placeholder="Peach, Flour, Eggs, Sugar"
+            onKeyDown={(e) => {
+              const keyCode = e.which || e.keyCode;
+              if (keyCode === 13) {
+                fetcher.submit(e.currentTarget.form, {
+                  method: "POST",
+                });
+              }
+            }}
+          />
+        </fetcher.Form>
+        {isSubmitting && <p>Thinking...</p>}
+        {answer && (
+          <pre className="overflow-auto bg-white rounded border border-gray-200">
+            {answer}
+          </pre>
+        )}
+        <Highlight language="js">
+          {`import { ChatOpenAI } from "@langchain/openai";
 import { SystemMessage, HumanMessage } from "@langchain/core/messages";
 import { z } from "zod";
 
 // Create an instance of a LLM
 const llm = new ChatOpenAI({
-  modelName: "gpt-3.5-turbo-0125",
+  model: "gpt-4o-mini",
   temperature: 0,
 });
 
@@ -93,8 +93,8 @@ export async function generateRecipe(ingredients) {
   return llmWithStructuredOutput.invoke(messages);
 }
 `}
-				</Highlight>
-			</CardContent>
-		</Card>
-	);
+        </Highlight>
+      </CardContent>
+    </Card>
+  );
 }
