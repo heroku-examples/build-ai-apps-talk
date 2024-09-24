@@ -66,6 +66,11 @@ export default function Resources() {
               Ollama Cloud Native Buildpack
             </a>
           </li>
+          <li>
+            <a href="https://github.com/a16z-infra/llm-app-stack">
+              LLM App Stack aka Emerging Architectures for LLM Applications
+            </a>
+          </li>
         </ul>
       </div>
     </main>
