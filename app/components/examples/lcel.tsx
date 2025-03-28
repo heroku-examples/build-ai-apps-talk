@@ -91,14 +91,15 @@ export function LCEL() {
         {isSubmitting && <LoadingIndicator className="my-4" />}
         {answer && <Answer content={answer} />}
         <Highlight language="js">
-          {`import { ChatOpenAI } from "@langchain/openai";
+          {`import "dotenv/config";
+import { ChatOpenAI } from "@langchain/openai";
 import { RunnableSequence } from "@langchain/core/runnables";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 
 // Create an instance of a chat model
 const llm = new ChatOpenAI({
-  model: "gpt-4o-mini",
+  model: process.env.OPENAI_MODEL,
   temperature: 0,
 });
 
