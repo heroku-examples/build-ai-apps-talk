@@ -1,4 +1,6 @@
+import { Answer } from "@/components/answer/answer";
 import { Highlight } from "@/components/hightlight/hightlight";
+import { LoadingIndicator } from "@/components/loading-indicator";
 import {
   Card,
   CardContent,
@@ -9,13 +11,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { useFetcher } from "@remix-run/react";
 import { useEffect, useState } from "react";
-
-interface Answer {
+interface BasicsAnswer {
   output: string;
 }
 
 export function Basics() {
-  const fetcher = useFetcher<Answer>();
+  const fetcher = useFetcher<BasicsAnswer>();
   const [answer, setAnswer] = useState("");
 
   const isSubmitting = fetcher.state === "submitting";
@@ -45,6 +46,7 @@ export function Basics() {
             onKeyDown={(e) => {
               const keyCode = e.which || e.keyCode;
               if (keyCode === 13) {
+                setAnswer("");
                 fetcher.submit(e.currentTarget.form, {
                   method: "POST",
                 });
@@ -52,8 +54,8 @@ export function Basics() {
             }}
           />
         </fetcher.Form>
-        {isSubmitting && <p>Thinking...</p>}
-        {answer && <p>{answer}</p>}
+        {isSubmitting && <LoadingIndicator className="my-4" />}
+        {answer && <Answer content={answer} />}
         <Highlight language="js">
           {`import { OpenAI } from "@langchain/openai";
 
@@ -66,6 +68,7 @@ const llm = new OpenAI({
 export async function getCompletion(input) {
   return llm.invoke(input);
 }
+
 `}
         </Highlight>
       </CardContent>

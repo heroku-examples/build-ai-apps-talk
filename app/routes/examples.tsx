@@ -2,8 +2,13 @@ import type { ActionFunctionArgs } from "@remix-run/node";
 import { agentQuestion } from "~/agent";
 import { getCompletion } from "~/basics";
 import { assistantQuestion } from "~/chat";
+import { askFirstQuestion, askSecondQuestion, generateGraph } from "~/langraph";
 import { generateCode } from "~/lcel";
-import { askQuestion, loadVideo } from "~/rag";
+import {
+  askQuestion as mcpAskQuestion,
+  generateGraph as mcpGenerateGraph,
+} from "~/mcp";
+import { askQuestion, getRepositories, loadRepo } from "~/rag";
 import { generateRecipe } from "~/structured";
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -52,21 +57,48 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 
   if (example === "rag-load") {
-    const video = formData.get("video") as string;
-    const { url, source } = await loadVideo(video);
-    return {
-      url,
-      source,
-    };
+    const repo = formData.get("repo") as string;
+    const repoData = await loadRepo(repo);
+    return repoData;
   }
 
   if (example === "rag") {
     const question = formData.get("question") as string;
-    const source = formData.get("source") as string;
-    const output = await askQuestion({ question, source });
+    const repoUrl = formData.get("repoUrl") as string;
+    const output = await askQuestion({ question, repoUrl });
     return {
       output,
     };
+  }
+
+  if (example === "langraph") {
+    const firstQuestion = formData.get("firstQuestion") as string;
+    const secondQuestion = formData.get("secondQuestion") as string;
+
+    const firstAnswer = await askFirstQuestion(firstQuestion);
+    const secondAnswer = await askSecondQuestion(secondQuestion);
+    const graph = await generateGraph();
+
+    return {
+      firstAnswer,
+      secondAnswer,
+      graph,
+    };
+  }
+
+  if (example === "mcp") {
+    const question = formData.get("question") as string;
+    const output = await mcpAskQuestion(question);
+    const graph = await mcpGenerateGraph();
+    return {
+      output,
+      graph,
+    };
+  }
+
+  if (example === "rag-repos") {
+    const repositories = await getRepositories();
+    return repositories;
   }
 
   return new Response("Not Found", { status: 404 });

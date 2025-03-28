@@ -1,4 +1,6 @@
+import { Answer } from "@/components/answer/answer";
 import { Highlight } from "@/components/hightlight/hightlight";
+import { LoadingIndicator } from "@/components/loading-indicator";
 import {
   Card,
   CardContent,
@@ -10,12 +12,12 @@ import { Input } from "@/components/ui/input";
 import { useFetcher } from "@remix-run/react";
 import { useEffect, useState } from "react";
 
-interface Answer {
+interface AgentAnswer {
   output: string;
 }
 
 export function Agent() {
-  const fetcher = useFetcher<Answer>();
+  const fetcher = useFetcher<AgentAnswer>();
   const [answer, setAnswer] = useState("");
 
   const isSubmitting = fetcher.state === "submitting";
@@ -52,10 +54,11 @@ export function Agent() {
             }}
           />
         </fetcher.Form>
-        {isSubmitting && <p>Thinking...</p>}
-        {answer && <p>{answer}</p>}
+        {isSubmitting && <LoadingIndicator className="my-4" />}
+        {answer && <Answer content={answer} />}
         <Highlight language="js">
-          {`import { WikipediaQueryRun } from "@langchain/community/tools/wikipedia_query_run";
+          {`import "dotenv/config";
+import { WikipediaQueryRun } from "@langchain/community/tools/wikipedia_query_run";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { DynamicTool } from "@langchain/core/tools";
 import { ChatOpenAI } from "@langchain/openai";
@@ -64,7 +67,7 @@ import { createToolCallingAgent } from "langchain/agents";
 
 // Create an instance of a chat model
 const llm = new ChatOpenAI({
-  model: "gpt-4o-mini",
+  model: process.env.OPENAI_MODEL,
   temperature: 0,
 });
 

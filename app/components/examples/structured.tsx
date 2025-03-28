@@ -1,4 +1,6 @@
+import { Answer } from "@/components/answer/answer";
 import { Highlight } from "@/components/hightlight/hightlight";
+import { LoadingIndicator } from "@/components/loading-indicator";
 import {
   Card,
   CardContent,
@@ -9,13 +11,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { useFetcher } from "@remix-run/react";
 import { useEffect, useState } from "react";
-
-interface Answer {
+interface StructuredAnswer {
   output: string;
 }
 
 export function Structured() {
-  const fetcher = useFetcher<Answer>();
+  const fetcher = useFetcher<StructuredAnswer>();
   const [answer, setAnswer] = useState("");
 
   const isSubmitting = fetcher.state === "submitting";
@@ -52,12 +53,8 @@ export function Structured() {
             }}
           />
         </fetcher.Form>
-        {isSubmitting && <p>Thinking...</p>}
-        {answer && (
-          <pre className="overflow-auto bg-white rounded border border-gray-200">
-            {answer}
-          </pre>
-        )}
+        {isSubmitting && <LoadingIndicator className="my-4" />}
+        {answer && <Answer content={`\`\`\` json\n${answer}\`\`\``} />}
         <Highlight language="js">
           {`import { ChatOpenAI } from "@langchain/openai";
 import { SystemMessage, HumanMessage } from "@langchain/core/messages";

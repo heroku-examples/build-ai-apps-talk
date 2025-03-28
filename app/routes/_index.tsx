@@ -1,7 +1,9 @@
 import { Agent } from "@/components/examples/agent";
 import { Basics } from "@/components/examples/basics";
 import { Chat } from "@/components/examples/chat";
+import { LangGraph } from "@/components/examples/langraph";
 import { LCEL } from "@/components/examples/lcel";
+import { MCP } from "@/components/examples/mcp";
 import { Rag } from "@/components/examples/rag";
 import { Structured } from "@/components/examples/structured";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -26,6 +28,8 @@ export default function Index() {
           <TabsTrigger value="chat">Chat</TabsTrigger>
           <TabsTrigger value="agents">Agents</TabsTrigger>
           <TabsTrigger value="rag">RAG</TabsTrigger>
+          <TabsTrigger value="langraph">LangGraph</TabsTrigger>
+          <TabsTrigger value="mcp">MCP</TabsTrigger>
         </TabsList>
         <TabsContent value="basics">
           <Basics />
@@ -44,6 +48,12 @@ export default function Index() {
         </TabsContent>
         <TabsContent value="rag">
           <Rag />
+        </TabsContent>
+        <TabsContent value="mcp">
+          <MCP />
+        </TabsContent>
+        <TabsContent value="langraph">
+          <LangGraph />
         </TabsContent>
       </Tabs>
     </main>

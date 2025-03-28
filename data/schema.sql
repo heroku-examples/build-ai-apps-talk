@@ -1,10 +1,10 @@
 CREATE EXTENSION IF NOT EXISTS vector;
 
-CREATE TABLE IF NOT EXISTS videos (
-  id SERIAL PRIMARY KEY,
-  title TEXT,
-  description TEXT,
-  source TEXT
+CREATE TABLE repositories (
+    id SERIAL PRIMARY KEY,
+    repo_url TEXT UNIQUE,
+    owner TEXT,
+    repo TEXT
 );
 
--- video_embeddings table will be created by LangChain
+-- repo_embeddings table will be created by LangChain

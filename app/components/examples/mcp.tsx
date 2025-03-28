@@ -1,0 +1,130 @@
+import { Answer } from "@/components/answer/answer";
+import { Highlight } from "@/components/hightlight/hightlight";
+import { LoadingIndicator } from "@/components/loading-indicator";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { useFetcher } from "@remix-run/react";
+import { useEffect, useState } from "react";
+
+interface MCPAnswer {
+  output: string;
+  graph?: string;
+}
+
+export function MCP() {
+  const fetcher = useFetcher<MCPAnswer>();
+  const [answer, setAnswer] = useState("");
+  const [question, setQuestion] = useState("");
+  const [graphImage, setGraphImage] = useState<string | null>(null);
+
+  const isSubmitting = fetcher.state === "submitting";
+  const output = fetcher.data?.output;
+  const graph = fetcher.data?.graph;
+  useEffect(() => {
+    if (output) {
+      setAnswer(output);
+    }
+  }, [output]);
+
+  useEffect(() => {
+    if (graph) {
+      setGraphImage(graph);
+    }
+  }, [graph]);
+
+  return (
+    <Card className="w-[1200px]">
+      <CardHeader>
+        <CardTitle>Model Context Protocol</CardTitle>
+        <CardDescription>
+          Ask questions using the MCP agent with database tools
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-4">
+          <fetcher.Form method="post" action="/examples">
+            <Input type="hidden" name="example" value="mcp" />
+            <Input
+              type="text"
+              name="question"
+              value={question}
+              placeholder="Ask a question about the database..."
+              onChange={(e) => {
+                setQuestion(e.currentTarget.value);
+              }}
+              onKeyDown={(e) => {
+                const keyCode = e.which || e.keyCode;
+                if (keyCode === 13) {
+                  setAnswer("");
+                  fetcher.submit(e.currentTarget.form, {
+                    method: "POST",
+                  });
+                }
+              }}
+            />
+          </fetcher.Form>
+          {isSubmitting && <LoadingIndicator className="my-4" />}
+          {answer && <Answer content={answer} />}
+          {graphImage && (
+            <div className="space-y-2">
+              <h3 className="font-semibold">Agent's Thought Process:</h3>
+              <img
+                src={graphImage}
+                alt="Agent's thought process graph"
+                className="max-w-full"
+              />
+            </div>
+          )}
+        </div>
+        <Highlight language="js">
+          {`import "dotenv/config";
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
+import { ChatOpenAI } from "@langchain/openai";
+import { createReactAgent } from "@langchain/langgraph/prebuilt";
+import { loadMcpTools } from "@langchain/mcp-adapters";
+import { HumanMessage } from "@langchain/core/messages";
+
+export async function askQuestion(question) {
+  const model = new ChatOpenAI({
+    model: process.env.OPENAI_MODEL,
+  });
+
+  const transport = new StdioClientTransport({
+    command: "npx",
+    args: [
+      "-y",
+      "@modelcontextprotocol/server-postgres",
+      \`\${process.env.DATABASE_URL}?sslmode=no-verify\`,
+    ],
+  });
+
+  const client = new Client({
+    name: "database-client",
+    version: "1.0.0",
+  });
+
+  await client.connect(transport);
+  const tools = await loadMcpTools("database", client);
+  const agent = createReactAgent({
+    llm: model,
+    tools,
+  });
+
+  const response = await agent.invoke({
+    messages: [new HumanMessage(question)],
+  });
+
+  return response.messages[response.messages.length - 1].content;
+}`}
+        </Highlight>
+      </CardContent>
+    </Card>
+  );
+}

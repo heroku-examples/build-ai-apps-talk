@@ -1,7 +1,3 @@
-function lightDarkVar(baseName) {
-  return `var(--theme-light, hsl(var(--${baseName}))) var(--theme-dark, hsl(var(--${baseName}-dark)))`;
-}
-
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],
@@ -22,38 +18,49 @@ module.exports = {
     },
     extend: {
       colors: {
-        border: lightDarkVar("border"),
-        input: lightDarkVar("input"),
-        ring: lightDarkVar("ring"),
-        background: lightDarkVar("background"),
-        foreground: lightDarkVar("foreground"),
+        heroku: {
+          purple: "#5A1BA9",
+          light: "#AD7BEE",
+          dark: "#401075",
+          black: "#1B1B1B",
+          white: "#FFFFFF",
+        },
+        border: "#E5E7EB",
+        input: "#E5E7EB",
+        ring: "#5A1BA9",
+        background: "#FFFFFF",
+        foreground: "#111827",
         primary: {
-          DEFAULT: lightDarkVar("primary"),
-          foreground: lightDarkVar("primary-foreground"),
+          DEFAULT: "#5A1BA9",
+          foreground: "#FFFFFF",
         },
         secondary: {
-          DEFAULT: lightDarkVar("secondary"),
-          foreground: lightDarkVar("secondary-foreground"),
+          DEFAULT: "#F3F4F6",
+          foreground: "#111827",
         },
         destructive: {
-          DEFAULT: lightDarkVar("destructive"),
-          foreground: lightDarkVar("destructive-foreground"),
+          DEFAULT: "#EF4444",
+          foreground: "#F9FAFB",
         },
         muted: {
-          DEFAULT: lightDarkVar("muted"),
-          foreground: lightDarkVar("muted-foreground"),
+          DEFAULT: "#F3F4F6",
+          foreground: "#6B7280",
         },
         accent: {
-          DEFAULT: lightDarkVar("accent"),
-          foreground: lightDarkVar("accent-foreground"),
+          DEFAULT: "#AD7BEE",
+          foreground: "#111827",
+        },
+        nav: {
+          DEFAULT: "#AD7BEE",
+          foreground: "#111827",
         },
         popover: {
-          DEFAULT: lightDarkVar("popover"),
-          foreground: lightDarkVar("popover-foreground"),
+          DEFAULT: "#FFFFFF",
+          foreground: "#111827",
         },
         card: {
-          DEFAULT: lightDarkVar("card"),
-          foreground: lightDarkVar("card-foreground"),
+          DEFAULT: "#FFFFFF",
+          foreground: "#111827",
         },
       },
       borderRadius: {
@@ -87,99 +94,99 @@ module.exports = {
       typography: () => ({
         DEFAULT: {
           css: {
-            color: lightDarkVar("foreground"),
+            color: "#111827",
             '[class~="lead"]': {
-              color: lightDarkVar("foreground"),
+              color: "#111827",
             },
             a: {
-              color: lightDarkVar("primary"),
+              color: "#111827",
             },
             strong: {
-              color: lightDarkVar("foreground"),
+              color: "#111827",
             },
             "a strong": {
-              color: lightDarkVar("primary"),
+              color: "#111827",
             },
             "blockquote strong": {
-              color: lightDarkVar("foreground"),
+              color: "#111827",
             },
             "thead th strong": {
-              color: lightDarkVar("foreground"),
+              color: "#111827",
             },
             "ol > li::marker": {
-              color: lightDarkVar("foreground"),
+              color: "#111827",
             },
             "ul > li::marker": {
-              color: lightDarkVar("foreground"),
+              color: "#111827",
             },
             dt: {
-              color: lightDarkVar("foreground"),
+              color: "#111827",
             },
             blockquote: {
-              color: lightDarkVar("foreground"),
+              color: "#111827",
             },
             h1: {
-              color: lightDarkVar("foreground"),
+              color: "#111827",
             },
             "h1 strong": {
-              color: lightDarkVar("foreground"),
+              color: "#111827",
             },
             h2: {
-              color: lightDarkVar("foreground"),
+              color: "#111827",
             },
             "h2 strong": {
-              color: lightDarkVar("foreground"),
+              color: "#111827",
             },
             h3: {
-              color: lightDarkVar("foreground"),
+              color: "#111827",
             },
             "h3 strong": {
-              color: lightDarkVar("foreground"),
+              color: "#111827",
             },
             h4: {
-              color: lightDarkVar("foreground"),
+              color: "#111827",
             },
             "h4 strong": {
-              color: lightDarkVar("foreground"),
+              color: "#111827",
             },
             kbd: {
-              color: lightDarkVar("foreground"),
+              color: "#111827",
             },
             code: {
-              color: lightDarkVar("foreground"),
+              color: "#111827",
             },
             "a code": {
-              color: lightDarkVar("primary"),
+              color: "#111827",
             },
             "h1 code": {
-              color: lightDarkVar("foreground"),
+              color: "#111827",
             },
             "h2 code": {
-              color: lightDarkVar("foreground"),
+              color: "#111827",
             },
             "h3 code": {
-              color: lightDarkVar("foreground"),
+              color: "#111827",
             },
             "h4 code": {
-              color: lightDarkVar("foreground"),
+              color: "#111827",
             },
             "blockquote code": {
-              color: lightDarkVar("foreground"),
+              color: "#111827",
             },
             "thead th code": {
-              color: lightDarkVar("foreground"),
+              color: "#111827",
             },
             pre: {
-              color: lightDarkVar("foreground"),
+              color: "#111827",
             },
             "pre code": {
-              color: lightDarkVar("foreground"),
+              color: "#111827",
             },
             "thead th": {
-              color: lightDarkVar("foreground"),
+              color: "#111827",
             },
             figcaption: {
-              color: lightDarkVar("foreground"),
+              color: "#111827",
             },
           },
         },

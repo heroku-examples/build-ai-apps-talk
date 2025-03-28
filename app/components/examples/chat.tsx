@@ -1,4 +1,6 @@
+import { Answer } from "@/components/answer/answer";
 import { Highlight } from "@/components/hightlight/hightlight";
+import { LoadingIndicator } from "@/components/loading-indicator";
 import {
   Card,
   CardContent,
@@ -8,9 +10,9 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useFetcher } from "@remix-run/react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-interface Answer {
+interface ChatAnswer {
   output: string;
 }
 
@@ -21,9 +23,17 @@ interface Message {
 }
 
 export function Chat() {
-  const fetcher = useFetcher<Answer>();
+  const fetcher = useFetcher<ChatAnswer>();
   const [messages, setMessages] = useState<Message[]>([]);
   const [message, setMessage] = useState<string>();
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = useCallback(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
+    }
+  }, []);
 
   const handleAddMessage = useCallback(
     (type: "system" | "human" | undefined, text: string | undefined) => {
@@ -33,8 +43,9 @@ export function Chat() {
         ...currentMessages,
         { key: currentMessages.length + 1, type, text },
       ]);
+      setTimeout(scrollToBottom, 100);
     },
-    [],
+    [scrollToBottom],
   );
 
   const isSubmitting = fetcher.state === "submitting";
@@ -43,8 +54,9 @@ export function Chat() {
   useEffect(() => {
     if (output) {
       handleAddMessage("system", output);
+      setTimeout(scrollToBottom, 100);
     }
-  }, [output, handleAddMessage]);
+  }, [output, handleAddMessage, scrollToBottom]);
 
   return (
     <Card className="w-[1200px]">
@@ -54,7 +66,36 @@ export function Chat() {
           Chat with an specialized LLM with a history of messages
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex flex-col gap-4">
+        {messages && messages.length > 0 && (
+          <div
+            ref={chatContainerRef}
+            className="h-[400px] overflow-y-auto border rounded-lg p-3 bg-white"
+          >
+            <div className="space-y-3">
+              {messages.map((message) => (
+                <div
+                  key={message.key}
+                  className={`flex ${message.type === "system" ? "justify-end" : "justify-start"}`}
+                >
+                  <div
+                    className={`max-w-[80%] min-w-[200px] rounded-lg p-2 ${
+                      message.type === "system"
+                        ? "bg-blue-100 text-blue-900"
+                        : "bg-gray-100 text-gray-900"
+                    }`}
+                  >
+                    <div className="text-sm font-semibold mb-0.5">
+                      {message.type === "system" ? "Assistant" : "You"}
+                    </div>
+                    <Answer content={message.text} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        {isSubmitting && <LoadingIndicator className="my-4" />}
         <fetcher.Form method="post" action="/examples">
           <Input type="hidden" name="example" value="chat" />
           <div className="flex space-x-4">
@@ -86,23 +127,9 @@ export function Chat() {
             />
           </div>
         </fetcher.Form>
-        {isSubmitting && <p>Thinking...</p>}
-        {messages && (
-          <div className="space-y-2">
-            {messages.map((message) => (
-              <div
-                key={message.key}
-                className={message.type === "system" ? "text-right" : ""}
-              >
-                <p>
-                  {message.type}: {message.text}
-                </p>
-              </div>
-            ))}
-          </div>
-        )}
         <Highlight language="js">
-          {`import { ChatMessageHistory } from "@langchain/community/stores/message/in_memory";
+          {`import "dotenv/config";
+import { ChatMessageHistory } from "@langchain/community/stores/message/in_memory";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import {
   ChatPromptTemplate,
@@ -113,7 +140,7 @@ import { ChatOpenAI } from "@langchain/openai";
 
 // Instantiate the chat model
 const llm = new ChatOpenAI({
-  model: "gpt-4o-mini",
+  model: process.env.OPENAI_MODEL,
   temperature: 0,
 });
 
@@ -149,7 +176,7 @@ export async function assistantQuestion({ skill, message }) {
       configurable: {
         sessionId: "assistant", // needed in case you are using a memory store like Redis
       },
-    }
+    },
   );
 }
 `}

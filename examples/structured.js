@@ -5,7 +5,7 @@ import { z } from "zod";
 
 // Create an instance of a LLM
 const llm = new ChatOpenAI({
-  model: "gpt-4o-mini",
+  model: process.env.OPENAI_MODEL,
   temperature: 0,
 });
 

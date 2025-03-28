@@ -1,4 +1,6 @@
+import { Answer } from "@/components/answer/answer";
 import { Highlight } from "@/components/hightlight/hightlight";
+import { LoadingIndicator } from "@/components/loading-indicator";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,13 +13,29 @@ import { Input } from "@/components/ui/input";
 import { useFetcher } from "@remix-run/react";
 import { useEffect, useState } from "react";
 
-interface Answer {
+interface LCELAnswer {
   output: string;
 }
 
+const PROGRAMMING_LANGUAGES = [
+  "JavaScript",
+  "Python",
+  "Ruby",
+  "Go",
+  "Rust",
+  "Elixir",
+  "Java",
+  "C#",
+  "PHP",
+  "Swift",
+  "Kotlin",
+  "TypeScript",
+];
+
 export function LCEL() {
-  const fetcher = useFetcher<Answer>();
+  const fetcher = useFetcher<LCELAnswer>();
   const [answer, setAnswer] = useState("");
+  const [language, setLanguage] = useState("JavaScript");
 
   const isSubmitting = fetcher.state === "submitting";
   const output = fetcher.data?.output;
@@ -40,12 +58,18 @@ export function LCEL() {
         <fetcher.Form method="post" action="/examples">
           <Input type="hidden" name="example" value="lcel" />
           <div className="flex space-x-4">
-            <Input
-              type="text"
+            <select
               name="language"
-              placeholder="JavaScript"
-              className="w-1/12 p-2"
-            />
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+              className="w-[180px] rounded-md border border-input bg-background px-3 py-2"
+            >
+              {PROGRAMMING_LANGUAGES.map((lang) => (
+                <option key={lang} value={lang}>
+                  {lang}
+                </option>
+              ))}
+            </select>
             <Input
               type="text"
               name="problem"
@@ -64,12 +88,8 @@ export function LCEL() {
             Generate Code
           </Button>
         </fetcher.Form>
-        {isSubmitting && <p>Thinking...</p>}
-        {answer && (
-          <pre className="overflow-auto bg-white rounded border border-gray-200">
-            {answer}
-          </pre>
-        )}
+        {isSubmitting && <LoadingIndicator className="my-4" />}
+        {answer && <Answer content={answer} />}
         <Highlight language="js">
           {`import { ChatOpenAI } from "@langchain/openai";
 import { RunnableSequence } from "@langchain/core/runnables";

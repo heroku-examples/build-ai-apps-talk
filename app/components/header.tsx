@@ -6,12 +6,14 @@ export function Header() {
       <div className="flex items-center space-x-4">
         <Link className="flex items-center space-x-2" to="/">
           <img src="/logo.png" alt="Heroku" className="w-12 h-12" />
-          <span className="text-lg font-bold">
+          <span className="text-lg text-heroku-purple font-bold">
             Build AI Applications with Node and LangChain
           </span>
         </Link>
       </div>
-      <Link to="/resources">Learning Resources</Link>
+      <Link className="text-heroku-purple" to="/resources">
+        Learning Resources
+      </Link>
     </header>
   );
 }

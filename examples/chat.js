@@ -10,7 +10,7 @@ import { ChatOpenAI } from "@langchain/openai";
 
 // Instantiate the chat model
 const llm = new ChatOpenAI({
-  model: "gpt-4o-mini",
+  model: process.env.OPENAI_MODEL,
   temperature: 0,
 });
 

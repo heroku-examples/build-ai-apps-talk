@@ -5,7 +5,7 @@ import { ChatOpenAI } from "@langchain/openai";
 
 // Create an instance of a chat model
 const llm = new ChatOpenAI({
-  model: "gpt-4o-mini",
+  model: process.env.OPENAI_MODEL,
   temperature: 0,
 });
 
@@ -14,7 +14,7 @@ const promptTemplate = ChatPromptTemplate.fromMessages([
   [
     "system",
     `You are a professional software developer who knows about {language}. 
-    Return just the code without any explanations, and not enclosed in markdown.
+    Return just the code without any explanations, and always enclose the code in markdown code blocks.
     You can add inline comments if necessary.`,
   ],
   ["human", "Generate code for the following use case: {problem}"],

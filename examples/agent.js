@@ -8,7 +8,7 @@ import { createToolCallingAgent } from "langchain/agents";
 
 // Create an instance of a chat model
 const llm = new ChatOpenAI({
-  model: "gpt-4o-mini",
+  model: process.env.OPENAI_MODEL,
   temperature: 0,
 });
 
