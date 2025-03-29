@@ -1,6 +1,7 @@
 import { Answer } from "@/components/answer/answer";
 import { Highlight } from "@/components/hightlight/hightlight";
 import { LoadingIndicator } from "@/components/loading-indicator";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -59,7 +60,7 @@ export function Chat() {
   }, [output, handleAddMessage, scrollToBottom]);
 
   return (
-    <Card className="w-[1200px]">
+    <Card className="w-full">
       <CardHeader>
         <CardTitle>Chat with History</CardTitle>
         <CardDescription>
@@ -125,6 +126,9 @@ export function Chat() {
                 }
               }}
             />
+            <Button type="submit" className="p-2">
+              Send
+            </Button>
           </div>
         </fetcher.Form>
         <Highlight language="js">

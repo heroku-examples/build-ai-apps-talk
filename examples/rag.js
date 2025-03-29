@@ -33,7 +33,7 @@ async function setupPgVector() {
 
   const pgVectorStore = await PGVectorStore.initialize(
     new OpenAIEmbeddings(),
-    pgOptions
+    pgOptions,
   );
 
   return pgVectorStore;
@@ -52,7 +52,7 @@ export async function loadRepo(repoUrl) {
     maxConcurrency: 10,
     accessToken: process.env.GITHUB_TOKEN,
   });
-  
+
   const docs = await loader.load();
 
   // Ignore files manually
@@ -70,13 +70,14 @@ export async function loadRepo(repoUrl) {
     "SECURITY.md",
     "CODE_OF_CONDUCT.md",
   ];
-  const filteredDocs = docs.filter((doc) => !ignoreFiles.some((file) => doc.metadata.source.includes(file)));
-
+  const filteredDocs = docs.filter(
+    (doc) => !ignoreFiles.some((file) => doc.metadata.source.includes(file)),
+  );
 
   // Check if the repository already exists in the database
   const repoExists = await pool.query(
     "SELECT id FROM repositories WHERE repo_url = $1",
-    [repoUrl]
+    [repoUrl],
   );
 
   // Repository already exists, don't vectorize it
@@ -91,7 +92,7 @@ export async function loadRepo(repoUrl) {
   // Insert the repository metadata into the database
   await pool.query(
     "INSERT INTO repositories (repo_url, owner, repo) VALUES ($1, $2, $3) RETURNING id",
-    [repoUrl, owner, repo]
+    [repoUrl, owner, repo],
   );
 
   // Create a text transformer that will split the text into chunks of 1000 characters
@@ -120,6 +121,7 @@ export async function askQuestion({ question, repoUrl }) {
   // Create a chat model that will be used to answer the questions
   const llm = new ChatOpenAI({
     model: process.env.OPENAI_MODEL,
+    temperature: 0,
   });
 
   // Create a prompt template that will be used to format the questions
@@ -161,7 +163,7 @@ Question: {input}`;
 // Get all repositories from the database
 export async function getRepositories() {
   const result = await pool.query(
-    "SELECT repo_url, owner, repo FROM repositories ORDER BY repo_url"
+    "SELECT repo_url, owner, repo FROM repositories ORDER BY repo_url",
   );
   return result.rows;
 }

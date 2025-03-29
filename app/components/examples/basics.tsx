@@ -1,6 +1,7 @@
 import { Answer } from "@/components/answer/answer";
 import { Highlight } from "@/components/hightlight/hightlight";
 import { LoadingIndicator } from "@/components/loading-indicator";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -11,6 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useFetcher } from "@remix-run/react";
 import { useEffect, useState } from "react";
+
 interface BasicsAnswer {
   output: string;
 }
@@ -29,7 +31,7 @@ export function Basics() {
   }, [output]);
 
   return (
-    <Card className="w-[1200px]">
+    <Card className="w-full">
       <CardHeader>
         <CardTitle>Hello World: Basic Completion</CardTitle>
         <CardDescription>
@@ -39,20 +41,26 @@ export function Basics() {
       <CardContent>
         <fetcher.Form method="post" action="/examples">
           <Input type="hidden" name="example" value="basics" />
-          <Input
-            type="text"
-            name="question"
-            placeholder="What is love?"
-            onKeyDown={(e) => {
-              const keyCode = e.which || e.keyCode;
-              if (keyCode === 13) {
-                setAnswer("");
-                fetcher.submit(e.currentTarget.form, {
-                  method: "POST",
-                });
-              }
-            }}
-          />
+          <div className="flex space-x-4">
+            <Input
+              type="text"
+              name="question"
+              placeholder="What is love?"
+              className="flex-grow p-2"
+              onKeyDown={(e) => {
+                const keyCode = e.which || e.keyCode;
+                if (keyCode === 13) {
+                  setAnswer("");
+                  fetcher.submit(e.currentTarget.form, {
+                    method: "POST",
+                  });
+                }
+              }}
+            />
+            <Button type="submit" className="p-2">
+              Submit
+            </Button>
+          </div>
         </fetcher.Form>
         {isSubmitting && <LoadingIndicator className="my-4" />}
         {answer && <Answer content={answer} />}

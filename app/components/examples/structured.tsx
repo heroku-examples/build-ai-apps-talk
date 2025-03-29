@@ -1,6 +1,7 @@
 import { Answer } from "@/components/answer/answer";
 import { Highlight } from "@/components/hightlight/hightlight";
 import { LoadingIndicator } from "@/components/loading-indicator";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -29,7 +30,7 @@ export function Structured() {
   }, [output]);
 
   return (
-    <Card className="w-[1200px]">
+    <Card className="w-full">
       <CardHeader>
         <CardTitle>Structured Output</CardTitle>
         <CardDescription>
@@ -39,30 +40,37 @@ export function Structured() {
       <CardContent>
         <fetcher.Form method="post" action="/examples">
           <Input type="hidden" name="example" value="structured" />
-          <Input
-            type="text"
-            name="ingredients"
-            placeholder="Peach, Flour, Eggs, Sugar"
-            onKeyDown={(e) => {
-              const keyCode = e.which || e.keyCode;
-              if (keyCode === 13) {
-                fetcher.submit(e.currentTarget.form, {
-                  method: "POST",
-                });
-              }
-            }}
-          />
+          <div className="flex space-x-4">
+            <Input
+              type="text"
+              name="ingredients"
+              placeholder="Peach, Flour, Eggs, Sugar"
+              className="flex-grow p-2"
+              onKeyDown={(e) => {
+                const keyCode = e.which || e.keyCode;
+                if (keyCode === 13) {
+                  fetcher.submit(e.currentTarget.form, {
+                    method: "POST",
+                  });
+                }
+              }}
+            />
+            <Button type="submit" className="p-2">
+              Generate Recipe
+            </Button>
+          </div>
         </fetcher.Form>
         {isSubmitting && <LoadingIndicator className="my-4" />}
         {answer && <Answer content={`\`\`\` json\n${answer}\`\`\``} />}
         <Highlight language="js">
-          {`import { ChatOpenAI } from "@langchain/openai";
+          {`import "dotenv/config";
+import { ChatOpenAI } from "@langchain/openai";
 import { SystemMessage, HumanMessage } from "@langchain/core/messages";
 import { z } from "zod";
 
 // Create an instance of a LLM
 const llm = new ChatOpenAI({
-  model: "gpt-4o-mini",
+  model: process.env.OPENAI_MODEL,
   temperature: 0,
 });
 

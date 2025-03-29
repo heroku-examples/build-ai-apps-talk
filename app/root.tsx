@@ -10,6 +10,7 @@ import {
 
 import { GlobalPendingIndicator } from "@/components/global-pending-indicator";
 import { Header } from "@/components/header";
+import { Button } from "@/components/ui/button";
 
 import "./globals.css";
 
@@ -58,9 +59,16 @@ export function ErrorBoundary() {
 
   return (
     <App>
-      <div className="container py-8">
-        <h1>{status}</h1>
-        <p>{message}</p>
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <h1 className="text-6xl font-bold text-gray-900">{status}</h1>
+          <p className="text-xl text-gray-600">{message}</p>
+          <div className="mt-8">
+            <Button asChild>
+              <a href="/">Return Home</a>
+            </Button>
+          </div>
+        </div>
       </div>
     </App>
   );

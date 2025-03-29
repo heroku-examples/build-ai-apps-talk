@@ -78,12 +78,12 @@ export function Rag() {
   const formatRepoUrl = (input: string) => {
     // Remove any existing GitHub URL prefix
     const cleanUrl = input.replace(/^https?:\/\/github\.com\//, "");
-    
+
     // Validate the format (owner/repo)
     if (!/^[a-zA-Z0-9-]+\/[a-zA-Z0-9._-]+$/.test(cleanUrl)) {
       throw new Error("Invalid GitHub repository format. Use owner/repo");
     }
-    
+
     // Add the GitHub URL prefix
     return `https://github.com/${cleanUrl}`;
   };
@@ -100,10 +100,12 @@ export function Rag() {
     setError(null);
     setAnswer("");
     setQuestion("");
-    
+
     const form = e.currentTarget;
-    const repoInput = form.querySelector('input[name="repo"]') as HTMLInputElement;
-    
+    const repoInput = form.querySelector(
+      'input[name="repo"]',
+    ) as HTMLInputElement;
+
     if (!repoInput.value.trim()) {
       setError("Please enter a repository URL");
       return;
@@ -121,7 +123,7 @@ export function Rag() {
   };
 
   return (
-    <Card className="w-[1200px]">
+    <Card className="w-full">
       <CardHeader>
         <CardTitle>Retrieval-Augmented Generation</CardTitle>
         <CardDescription>
@@ -162,14 +164,17 @@ export function Rag() {
                     name="repo"
                     placeholder="GitHub repository URL (e.g., owner/repo)"
                     className="flex-grow p-2"
+                    disabled={isRepoSubmitting || repoUrl !== ""}
                   />
                   {error && (
-                    <p className="mt-1 left-0 text-sm text-red-500">
-                      {error}
-                    </p>
+                    <p className="mt-1 left-0 text-sm text-red-500">{error}</p>
                   )}
                 </div>
-                <Button type="submit" className="p-2">
+                <Button
+                  type="submit"
+                  className="p-2"
+                  disabled={isRepoSubmitting || repoUrl !== ""}
+                >
                   Load repository
                 </Button>
               </repoFetcher.Form>
@@ -194,25 +199,35 @@ export function Rag() {
             {(repoData || repoUrl) && (
               <questionFetcher.Form method="post" action="/examples">
                 <Input type="hidden" name="example" value="rag" />
-                <Input type="hidden" name="repoUrl" value={formatRepoUrl(repoUrl)} />
                 <Input
-                  type="text"
-                  name="question"
-                  value={question}
-                  placeholder="Ask a question about the repository..."
-                  onChange={(e) => {
-                    setQuestion(e.currentTarget.value);
-                  }}
-                  onKeyDown={(e) => {
-                    const keyCode = e.which || e.keyCode;
-                    if (keyCode === 13) {
-                      setAnswer("");
-                      questionFetcher.submit(e.currentTarget.form, {
-                        method: "POST",
-                      });
-                    }
-                  }}
+                  type="hidden"
+                  name="repoUrl"
+                  value={formatRepoUrl(repoUrl)}
                 />
+                <div className="flex space-x-4">
+                  <Input
+                    type="text"
+                    name="question"
+                    value={question}
+                    placeholder="Ask a question about the repository..."
+                    className="flex-grow p-2"
+                    onChange={(e) => {
+                      setQuestion(e.currentTarget.value);
+                    }}
+                    onKeyDown={(e) => {
+                      const keyCode = e.which || e.keyCode;
+                      if (keyCode === 13) {
+                        setAnswer("");
+                        questionFetcher.submit(e.currentTarget.form, {
+                          method: "POST",
+                        });
+                      }
+                    }}
+                  />
+                  <Button type="submit" className="p-2" disabled={isSubmitting}>
+                    Ask
+                  </Button>
+                </div>
               </questionFetcher.Form>
             )}
           </div>

@@ -1,6 +1,7 @@
 import { Answer } from "@/components/answer/answer";
 import { Highlight } from "@/components/hightlight/hightlight";
 import { LoadingIndicator } from "@/components/loading-indicator";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -39,7 +40,7 @@ export function MCP() {
   }, [graph]);
 
   return (
-    <Card className="w-[1200px]">
+    <Card className="w-full">
       <CardHeader>
         <CardTitle>Model Context Protocol</CardTitle>
         <CardDescription>
@@ -50,24 +51,30 @@ export function MCP() {
         <div className="space-y-4">
           <fetcher.Form method="post" action="/examples">
             <Input type="hidden" name="example" value="mcp" />
-            <Input
-              type="text"
-              name="question"
-              value={question}
-              placeholder="Ask a question about the database..."
-              onChange={(e) => {
-                setQuestion(e.currentTarget.value);
-              }}
-              onKeyDown={(e) => {
-                const keyCode = e.which || e.keyCode;
-                if (keyCode === 13) {
-                  setAnswer("");
-                  fetcher.submit(e.currentTarget.form, {
-                    method: "POST",
-                  });
-                }
-              }}
-            />
+            <div className="flex space-x-4">
+              <Input
+                type="text"
+                name="question"
+                value={question}
+                placeholder="Ask a question about the database..."
+                className="flex-grow p-2"
+                onChange={(e) => {
+                  setQuestion(e.currentTarget.value);
+                }}
+                onKeyDown={(e) => {
+                  const keyCode = e.which || e.keyCode;
+                  if (keyCode === 13) {
+                    setAnswer("");
+                    fetcher.submit(e.currentTarget.form, {
+                      method: "POST",
+                    });
+                  }
+                }}
+              />
+              <Button type="submit" className="p-2">
+                Ask
+              </Button>
+            </div>
           </fetcher.Form>
           {isSubmitting && <LoadingIndicator className="my-4" />}
           {answer && <Answer content={answer} />}

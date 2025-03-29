@@ -6,7 +6,7 @@ export function Header() {
       <div className="flex items-center space-x-4">
         <Link className="flex items-center space-x-2" to="/">
           <img src="/logo.png" alt="Heroku" className="w-12 h-12" />
-          <span className="text-lg text-heroku-purple font-bold">
+          <span className="text-xl text-heroku-purple font-bold">
             Build AI Applications with Node and LangChain
           </span>
         </Link>

@@ -15,39 +15,42 @@ const browser = new WebBrowser({ model, embeddings });
 const checkpointer = new MemorySaver();
 const tools = [browser];
 
-const agent = createReactAgent({
-  llm: model,
-  tools,
-  checkpointSaver: checkpointer,
-});
+export async function createAgent() {
+  const agent = createReactAgent({
+    llm: model,
+    tools,
+    checkpointer,
+  });
+  return agent;
+}
 
-export async function askFirstQuestion(question) {
+export async function askFirstQuestion(agent, question, threadId) {
   const finalState = await agent.invoke(
     {
       messages: [new HumanMessage(question)],
     },
     {
-      configurable: { thread_id: "1" },
+      configurable: { thread_id: threadId },
     },
   );
 
   return finalState.messages[finalState.messages.length - 1].content;
 }
 
-export async function askSecondQuestion(question) {
+export async function askSecondQuestion(agent, question, threadId) {
   const agentNextState = await agent.invoke(
     {
       messages: [new HumanMessage(question)],
     },
     {
-      configurable: { thread_id: "1" },
+      configurable: { thread_id: threadId },
     },
   );
 
   return agentNextState.messages[agentNextState.messages.length - 1].content;
 }
 
-export async function generateGraph() {
+export async function generateGraph(agent) {
   const graph = await agent.getGraphAsync();
   const image = await graph.drawMermaidPng();
   const arrayBuffer = await image.arrayBuffer();

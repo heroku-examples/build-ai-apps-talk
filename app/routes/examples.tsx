@@ -1,13 +1,21 @@
+import { randomUUID } from "node:crypto";
+import type { AIMessage, HumanMessage } from "@langchain/core/messages";
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { agentQuestion } from "~/agent";
 import { getCompletion } from "~/basics";
 import { assistantQuestion } from "~/chat";
-import { askFirstQuestion, askSecondQuestion, generateGraph } from "~/langraph";
+import {
+  askFirstQuestion,
+  askSecondQuestion,
+  createAgent,
+  generateGraph,
+} from "~/langraph";
 import { generateCode } from "~/lcel";
 import {
   askQuestion as mcpAskQuestion,
   generateGraph as mcpGenerateGraph,
 } from "~/mcp";
+import { runMultiAgent } from "~/multi-agent";
 import { askQuestion, getRepositories, loadRepo } from "~/rag";
 import { generateRecipe } from "~/structured";
 
@@ -75,9 +83,15 @@ export async function action({ request }: ActionFunctionArgs) {
     const firstQuestion = formData.get("firstQuestion") as string;
     const secondQuestion = formData.get("secondQuestion") as string;
 
-    const firstAnswer = await askFirstQuestion(firstQuestion);
-    const secondAnswer = await askSecondQuestion(secondQuestion);
-    const graph = await generateGraph();
+    const agent = await createAgent();
+    const threadId = randomUUID();
+    const firstAnswer = await askFirstQuestion(agent, firstQuestion, threadId);
+    const secondAnswer = await askSecondQuestion(
+      agent,
+      secondQuestion,
+      threadId,
+    );
+    const graph = await generateGraph(agent);
 
     return {
       firstAnswer,
@@ -99,6 +113,17 @@ export async function action({ request }: ActionFunctionArgs) {
   if (example === "rag-repos") {
     const repositories = await getRepositories();
     return repositories;
+  }
+
+  if (example === "multi-agent") {
+    const city = formData.get("city") as string;
+    const result = await runMultiAgent(city);
+    return {
+      output: result.messages.map(
+        (msg: AIMessage | HumanMessage) => msg.content,
+      ),
+      graph: result.graph,
+    };
   }
 
   return new Response("Not Found", { status: 404 });

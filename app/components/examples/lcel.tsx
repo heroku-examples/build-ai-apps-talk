@@ -47,7 +47,7 @@ export function LCEL() {
   }, [output]);
 
   return (
-    <Card className="w-[1200px]">
+    <Card className="w-full">
       <CardHeader>
         <CardTitle>LCEL: LangChain Expression Language</CardTitle>
         <CardDescription>
@@ -76,17 +76,10 @@ export function LCEL() {
               placeholder="Reverse a string"
               className="flex-grow p-2"
             />
+            <Button type="submit" className="p-2">
+              Generate Code
+            </Button>
           </div>
-          <Button
-            className="my-2"
-            onClick={(e) => {
-              fetcher.submit(e.currentTarget.form, {
-                method: "POST",
-              });
-            }}
-          >
-            Generate Code
-          </Button>
         </fetcher.Form>
         {isSubmitting && <LoadingIndicator className="my-4" />}
         {answer && <Answer content={answer} />}

@@ -4,6 +4,7 @@ import { Chat } from "@/components/examples/chat";
 import { LangGraph } from "@/components/examples/langraph";
 import { LCEL } from "@/components/examples/lcel";
 import { MCP } from "@/components/examples/mcp";
+import { MultiAgent } from "@/components/examples/multi-agent";
 import { Rag } from "@/components/examples/rag";
 import { Structured } from "@/components/examples/structured";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -19,9 +20,9 @@ export const meta: MetaFunction = () => {
 
 export default function Index() {
   return (
-    <main className="container-xl prose mx-20 py-2">
+    <main className="container mx-auto max-w-7xl px-4 py-2">
       <Tabs defaultValue="basics">
-        <TabsList className="w-[1200px]">
+        <TabsList className="w-full">
           <TabsTrigger value="basics">Basics</TabsTrigger>
           <TabsTrigger value="structured">Structured Output</TabsTrigger>
           <TabsTrigger value="lcel">LCEL</TabsTrigger>
@@ -29,6 +30,7 @@ export default function Index() {
           <TabsTrigger value="agents">Agents</TabsTrigger>
           <TabsTrigger value="rag">RAG</TabsTrigger>
           <TabsTrigger value="langraph">LangGraph</TabsTrigger>
+          <TabsTrigger value="multi-agent">Multi-Agent</TabsTrigger>
           <TabsTrigger value="mcp">MCP</TabsTrigger>
         </TabsList>
         <TabsContent value="basics">
@@ -49,11 +51,14 @@ export default function Index() {
         <TabsContent value="rag">
           <Rag />
         </TabsContent>
-        <TabsContent value="mcp">
-          <MCP />
-        </TabsContent>
         <TabsContent value="langraph">
           <LangGraph />
+        </TabsContent>
+        <TabsContent value="multi-agent">
+          <MultiAgent />
+        </TabsContent>
+        <TabsContent value="mcp">
+          <MCP />
         </TabsContent>
       </Tabs>
     </main>
