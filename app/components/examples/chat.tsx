@@ -116,17 +116,28 @@ export function Chat() {
                 setMessage(e.currentTarget.value);
               }}
               onKeyDown={(e) => {
-                const keyCode = e.which || e.keyCode;
-                if (keyCode === 13) {
-                  handleAddMessage("human", message);
-                  fetcher.submit(e.currentTarget.form, {
-                    method: "POST",
-                  });
-                  setMessage("");
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  if (message?.trim()) {
+                    handleAddMessage("human", message);
+                    fetcher.submit(e.currentTarget.form, {
+                      method: "POST",
+                    });
+                    setMessage("");
+                  }
                 }
               }}
             />
-            <Button type="submit" className="p-2">
+            <Button
+              type="submit"
+              className="p-2"
+              onClick={(e) => {
+                if (message?.trim()) {
+                  handleAddMessage("human", message);
+                  setMessage("");
+                }
+              }}
+            >
               Send
             </Button>
           </div>

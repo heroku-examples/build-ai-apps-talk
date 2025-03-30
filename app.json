@@ -1,0 +1,32 @@
+{
+  "name": "build-ai-apps",
+  "description": "Build Agentic AI Applications with Node.js and LangChain",
+  "keywords": ["node", "ai", "langchain", "openai"],
+  "website": "https://github.com/renderatl/build-ai-apps",
+  "repository": "https://github.com/renderatl/build-ai-apps",
+  "success_url": "/",
+  "env": {
+    "OPENAI_API_KEY": {
+      "description": "Your OpenAI API Key",
+      "required": true
+    },
+    "LANGCHAIN_API_KEY": {
+      "description": "Your LangSmith API Key",
+      "required": false
+    },
+    "LANGCHAIN_PROJECT": {
+      "description": "Your LangSmith Project Name",
+      "required": false
+    },
+    "OPENWEATHER_API_KEY": {
+      "description": "Your OpenWeather API Key",
+      "required": false
+    }
+  },
+  "addons": ["heroku-postgresql:essential-0"],
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ]
+}
