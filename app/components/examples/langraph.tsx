@@ -170,9 +170,7 @@ export async function generateGraph(agent) {
   const arrayBuffer = await image.arrayBuffer();
   const base64 = Buffer.from(arrayBuffer).toString("base64");
   return \`data:image/png;base64,\${base64}\`;
-}
-
-`}
+}`}
         </Highlight>
       </CardContent>
     </Card>

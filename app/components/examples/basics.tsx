@@ -75,9 +75,7 @@ const llm = new OpenAI({
 
 export async function getCompletion(input) {
   return llm.invoke(input);
-}
-
-`}
+}`}
         </Highlight>
       </CardContent>
     </Card>

@@ -235,8 +235,7 @@ export async function runMultiAgent(city = "New York") {
     messages: result.messages,
     graph: \`data:image/png;base64,\${base64}\`,
   };
-}
-`}
+}`}
         </Highlight>
       </CardContent>
     </Card>

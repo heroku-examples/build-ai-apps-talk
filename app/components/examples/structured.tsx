@@ -96,8 +96,7 @@ export async function generateRecipe(ingredients) {
     new HumanMessage(\`Ingredients: \${ingredients}.\`),
   ];
   return llmWithStructuredOutput.invoke(messages);
-}
-`}
+}`}
         </Highlight>
       </CardContent>
     </Card>

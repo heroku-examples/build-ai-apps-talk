@@ -126,8 +126,7 @@ const executor = new AgentExecutor({
 // Call the agent executor with a query
 export async function agentQuestion(input) {
   return executor.invoke({ input });
-}
-`}
+}`}
         </Highlight>
       </CardContent>
     </Card>

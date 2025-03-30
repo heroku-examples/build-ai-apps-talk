@@ -193,8 +193,7 @@ export async function assistantQuestion({ skill, message }) {
       },
     },
   );
-}
-`}
+}`}
         </Highlight>
       </CardContent>
     </Card>

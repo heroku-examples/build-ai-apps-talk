@@ -401,8 +401,7 @@ export async function getRepositories() {
     "SELECT repo_url, owner, repo FROM repositories ORDER BY repo_url"
   );
   return result.rows;
-}
-`}
+}`}
         </Highlight>
       </CardContent>
     </Card>
