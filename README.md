@@ -13,37 +13,35 @@ A modern web application demonstrating how to build AI-powered applications usin
 
 - Node.js (v20 or higher)
 - pnpm package manager
-- OpenAI API key
+- Heroku Managed Inference and Agents Add-on: `Claude-3-7-Sonnet` and `Cohere-Embed-Multilingual` (for RAG example)
 - LangSmith API key (optional for tracing)
-- PostgreSQL with pgvector support (for RAG example) 
+- PostgreSQL with pgvector support (for RAG example)
 - OpenWeather API key (for Agent example)
 
 ## Installation
 
 1. Install pnpm (if not already installed):
-```shell
-corepack install pnpm
-```
 
-2. Clone the repository:
-```shell
-git clone https://github.com/heroku-examples/build-ai-apps-talk
-cd build-ai-apps-talk
-```
+    ```shell
+    corepack install pnpm
+    ```
 
-3. Install dependencies:
-```shell
-pnpm install
-```
+1. Clone the repository:
 
-4. Set up environment variables:
+    ```shell
+    git clone https://github.com/heroku-examples/build-ai-apps-talk
+    cd build-ai-apps-talk
+    ```
+
+1. Install dependencies:
+
+    ```shell
+    pnpm install
+    ```
+
+1. Set up environment variables:
    - Copy `.env.sample` to `.env`
-   - Fill in your API keys and configuration:
-     - `OPENAI_API_KEY`: Your OpenAI API key
-     - `LANGCHAIN_API_KEY`: Your LangSmith API key (optional)
-     - `LANGCHAIN_PROJECT`: Your LangSmith project name (optional)
-     - `OPENWEATHER_API_KEY`: Your OpenWeather API Key (optional)
-     - `DATABASE_URL`: Your PostgreSQL database URL
+   - Fill in your API keys and configuration
 
 ## Development
 
@@ -63,33 +61,49 @@ The application will be available at `http://localhost:3000`
 
 ### Option 2: Manual Heroku Deployment
 
+> [!NOTE]
+> Make sure you have the AI plugin by running: `heroku plugins:install @heroku/plugin-ai`
+
 1. Create a new Heroku app:
-```shell
-heroku create <app-name>
-```
 
-2. Add PostgreSQL addon:
-```shell
-heroku addons:create heroku-postgresql:essential-0
-```
+    ```shell
+    heroku create <app-name>
+    ```
 
-3. Set up the database schema:
-```shell
-heroku pg:psql -f data/schema.sql
-```
+1. Add PostgreSQL addon:
 
-4. Configure environment variables:
-```shell
-heroku config:set OPENAI_API_KEY=your_key
-heroku config:set OPENWEATHER_API_KEY=your_key
-heroku config:set LANGCHAIN_API_KEY=your_key
-heroku config:set LANGCHAIN_PROJECT=your_project
-```
+    ```shell
+    heroku addons:create heroku-postgresql:essential-0
+    ```
 
-5. Deploy to Heroku:
-```shell
-git push heroku main
-```
+1. Add Managed Inference and Agents Add-on:
+
+    ```shell
+    heroku ai:models:create claude-3-7-sonnet
+    heroku ai:models:create cohere-embed-multilingual
+    ```
+
+    > [!NOTE]
+    > You can find the list of available models by running: `heroku ai:models:list`
+
+1. Set up the database schema:
+
+    ```shell
+    heroku pg:psql -f data/schema.sql
+    ```
+
+1. Configure environment variables:
+
+    ```shell
+    heroku config:set OPENWEATHER_API_KEY=your_key
+    ...
+    ```
+
+1. Deploy to Heroku:
+
+    ```shell
+    git push heroku main
+    ```
 
 ## Contributing
 
