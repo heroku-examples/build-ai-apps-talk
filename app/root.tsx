@@ -46,15 +46,35 @@ export function ErrorBoundary() {
   const error = useRouteError();
   let status = 500;
   let message = "An unexpected error occurred.";
+
   if (isRouteErrorResponse(error)) {
     status = error.status;
     switch (error.status) {
       case 404:
         message = "Page Not Found";
         break;
+      case 403:
+        message = "Access Forbidden";
+        break;
+      case 401:
+        message = "Unauthorized";
+        break;
+      case 500:
+        message = "Internal Server Error";
+        break;
+      default:
+        message = error.statusText || `Error ${error.status}`;
     }
   } else {
     console.error(error);
+    // Extract meaningful error message from the error object
+    if (error instanceof Error) {
+      message = error.message;
+    } else if (typeof error === "string") {
+      message = error;
+    } else if (error && typeof error === "object" && "message" in error) {
+      message = String(error.message);
+    }
   }
 
   return (

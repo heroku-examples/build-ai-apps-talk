@@ -10,6 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { useExampleCode } from "@/utils/misc";
 import { useFetcher } from "@remix-run/react";
 import { useEffect, useState } from "react";
 
@@ -23,6 +24,7 @@ export function MCP() {
   const [answer, setAnswer] = useState("");
   const [question, setQuestion] = useState("");
   const [graphImage, setGraphImage] = useState<string | null>(null);
+  const { code, loading: codeLoading } = useExampleCode("mcp");
 
   const isSubmitting = fetcher.state === "submitting";
   const output = fetcher.data?.output;
@@ -89,48 +91,11 @@ export function MCP() {
             </div>
           )}
         </div>
-        <Highlight language="js">
-          {`import "dotenv/config";
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
-import { ChatOpenAI } from "@langchain/openai";
-import { createReactAgent } from "@langchain/langgraph/prebuilt";
-import { loadMcpTools } from "@langchain/mcp-adapters";
-import { HumanMessage } from "@langchain/core/messages";
-
-export async function askQuestion(question) {
-  const model = new ChatOpenAI({
-    model: process.env.OPENAI_MODEL,
-  });
-
-  const transport = new StdioClientTransport({
-    command: "npx",
-    args: [
-      "-y",
-      "@modelcontextprotocol/server-postgres",
-      \`\${process.env.DATABASE_URL}?sslmode=no-verify\`,
-    ],
-  });
-
-  const client = new Client({
-    name: "database-client",
-    version: "1.0.0",
-  });
-
-  await client.connect(transport);
-  const tools = await loadMcpTools("database", client);
-  const agent = createReactAgent({
-    llm: model,
-    tools,
-  });
-
-  const response = await agent.invoke({
-    messages: [new HumanMessage(question)],
-  });
-
-  return response.messages[response.messages.length - 1].content;
-}`}
-        </Highlight>
+        {codeLoading ? (
+          <LoadingIndicator className="my-4" />
+        ) : (
+          <Highlight language="js">{code}</Highlight>
+        )}
       </CardContent>
     </Card>
   );

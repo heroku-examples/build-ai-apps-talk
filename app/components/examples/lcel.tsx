@@ -10,6 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { useExampleCode } from "@/utils/misc";
 import { useFetcher } from "@remix-run/react";
 import { useEffect, useState } from "react";
 
@@ -36,6 +37,11 @@ export function LCEL() {
   const fetcher = useFetcher<LCELAnswer>();
   const [answer, setAnswer] = useState("");
   const [language, setLanguage] = useState("JavaScript");
+  const {
+    code,
+    loading: codeLoading,
+    error: codeError,
+  } = useExampleCode("lcel");
 
   const isSubmitting = fetcher.state === "submitting";
   const output = fetcher.data?.output;
@@ -83,51 +89,17 @@ export function LCEL() {
         </fetcher.Form>
         {isSubmitting && <LoadingIndicator className="my-4" />}
         {answer && <Answer content={answer} />}
-        <Highlight language="js">
-          {`import "dotenv/config";
-import { ChatOpenAI } from "@langchain/openai";
-import { RunnableSequence } from "@langchain/core/runnables";
-import { ChatPromptTemplate } from "@langchain/core/prompts";
-import { StringOutputParser } from "@langchain/core/output_parsers";
-
-// Create an instance of a chat model
-const llm = new ChatOpenAI({
-  model: process.env.OPENAI_MODEL,
-  temperature: 0,
-});
-
-// Create a chat prompt
-const promptTemplate = ChatPromptTemplate.fromMessages([
-  [
-    "system",
-    \`You are a professional software developer who knows about {language}. 
-    Return just the code without any explanations, and not enclosed in markdown.
-    You can add inline comments if necessary.\`,
-  ],
-  ["human", "Generate code for the following use case: {problem}"],
-]);
-
-// Example of composing Runnables with pipe
-const chain = promptTemplate.pipe(llm).pipe(new StringOutputParser());
-
-export async function generateCode({ language, problem }) {
-  return chain.invoke({ language, problem });
-}
-
-// Example of composing Runnables with RunnableSequence
-const chain2 = RunnableSequence.from([
-  promptTemplate,
-  llm,
-  new StringOutputParser(),
-]);
-
-const output2 = await chain2.invoke({
-  language: "Elixir",
-  problem: "reverse a string",
-});
-console.log(output2);
-`}
-        </Highlight>
+        {codeLoading ? (
+          <LoadingIndicator className="my-4" />
+        ) : codeError ? (
+          <div className="my-4 p-4 bg-red-50 border border-red-200 rounded-md">
+            <p className="text-red-600 text-sm">
+              Failed to load example code: {codeError}
+            </p>
+          </div>
+        ) : (
+          <Highlight language="js">{code}</Highlight>
+        )}
       </CardContent>
     </Card>
   );

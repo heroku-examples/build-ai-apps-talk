@@ -1,9 +1,8 @@
 import "dotenv/config";
-import { OpenAI } from "@langchain/openai";
+import { HerokuMia } from "heroku-langchain";
 
 // Create an instance of a LLM
-const llm = new OpenAI({
-  model: "gpt-3.5-turbo-instruct",
+const llm = new HerokuMia({
   temperature: 0.5,
 });
 

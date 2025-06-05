@@ -10,6 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { useExampleCode } from "@/utils/misc";
 import { useFetcher } from "@remix-run/react";
 import { useEffect, useState } from "react";
 interface StructuredAnswer {
@@ -19,6 +20,7 @@ interface StructuredAnswer {
 export function Structured() {
   const fetcher = useFetcher<StructuredAnswer>();
   const [answer, setAnswer] = useState("");
+  const { code, loading: codeLoading } = useExampleCode("structured");
 
   const isSubmitting = fetcher.state === "submitting";
   const output = fetcher.data?.output;
@@ -62,42 +64,11 @@ export function Structured() {
         </fetcher.Form>
         {isSubmitting && <LoadingIndicator className="my-4" />}
         {answer && <Answer content={`\`\`\` json\n${answer}\`\`\``} />}
-        <Highlight language="js">
-          {`import "dotenv/config";
-import { ChatOpenAI } from "@langchain/openai";
-import { SystemMessage, HumanMessage } from "@langchain/core/messages";
-import { z } from "zod";
-
-// Create an instance of a LLM
-const llm = new ChatOpenAI({
-  model: process.env.OPENAI_MODEL,
-  temperature: 0,
-});
-
-// Define object schema for the recipe
-const recipe = z.object({
-  title: z.string().describe("The title of the recipe"),
-  description: z.string().describe("A description of the recipe"),
-  ingredients: z
-    .array(z.string())
-    .describe("A list of ingredients with quantities and units"),
-  steps: z.array(z.string()).describe("The steps to prepare the recipe"),
-});
-
-// Create a new LLM instance with structured output
-const llmWithStructuredOutput = llm.withStructuredOutput(recipe);
-
-// Generate a recipe based on the provided ingredients
-export async function generateRecipe(ingredients) {
-  const messages = [
-    new SystemMessage(
-      "You are a chef who is writing a recipe with provided available ingredients."
-    ),
-    new HumanMessage(\`Ingredients: \${ingredients}.\`),
-  ];
-  return llmWithStructuredOutput.invoke(messages);
-}`}
-        </Highlight>
+        {codeLoading ? (
+          <LoadingIndicator className="my-4" />
+        ) : (
+          <Highlight language="js">{code}</Highlight>
+        )}
       </CardContent>
     </Card>
   );

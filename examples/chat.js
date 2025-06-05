@@ -6,11 +6,10 @@ import {
   MessagesPlaceholder,
 } from "@langchain/core/prompts";
 import { RunnableWithMessageHistory } from "@langchain/core/runnables";
-import { ChatOpenAI } from "@langchain/openai";
+import { HerokuMia } from "heroku-langchain";
 
 // Instantiate the chat model
-const llm = new ChatOpenAI({
-  model: process.env.OPENAI_MODEL,
+const llm = new HerokuMia({
   temperature: 0,
 });
 

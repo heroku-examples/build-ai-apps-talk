@@ -1,11 +1,10 @@
 import "dotenv/config";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
-import { ChatOpenAI } from "@langchain/openai";
+import { HerokuMia } from "heroku-langchain";
 import { z } from "zod";
 
 // Create an instance of a LLM
-const llm = new ChatOpenAI({
-  model: process.env.OPENAI_MODEL,
+const llm = new HerokuMia({
   temperature: 0,
 });
 

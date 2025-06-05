@@ -1,11 +1,10 @@
 import "dotenv/config";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
-import { ChatOpenAI } from "@langchain/openai";
+import { HerokuMia } from "heroku-langchain";
 
 // Create an instance of a chat model
-const llm = new ChatOpenAI({
-  model: process.env.OPENAI_MODEL,
+const llm = new HerokuMia({
   temperature: 0,
 });
 

@@ -1,6 +1,8 @@
 import { randomUUID } from "node:crypto";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import type { AIMessage, HumanMessage } from "@langchain/core/messages";
-import type { ActionFunctionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { agentQuestion } from "~/agent";
 import { getCompletion } from "~/basics";
 import { assistantQuestion } from "~/chat";
@@ -19,15 +21,71 @@ import { runMultiAgent } from "~/multi-agent";
 import { askQuestion, getRepositories, loadRepo } from "~/rag";
 import { generateRecipe } from "~/structured";
 
+// Whitelist of allowed example files - prevents path traversal attacks
+// To add a new example:
+// 1. Add the filename (without .js extension) to this array
+// 2. Create the corresponding file in the examples/ directory
+// 3. Add the component to the examples page
+const ALLOWED_EXAMPLES = [
+  "basics",
+  "chat",
+  "structured",
+  "lcel",
+  "agent",
+  "langraph",
+  "mcp",
+  "multi-agent",
+  "rag",
+] as const;
+
+type AllowedExample = (typeof ALLOWED_EXAMPLES)[number];
+
+function isValidExample(example: string): example is AllowedExample {
+  return ALLOWED_EXAMPLES.includes(example as AllowedExample);
+}
+
+// Helper function to get available examples (useful for debugging/development)
+export function getAvailableExamples(): readonly string[] {
+  return ALLOWED_EXAMPLES;
+}
+
+export async function loader({ request }: LoaderFunctionArgs) {
+  const url = new URL(request.url);
+  const example = url.searchParams.get("code");
+
+  if (!example) {
+    return { code: null, error: "No example specified" };
+  }
+
+  // Validate against whitelist to prevent path traversal attacks
+  if (!isValidExample(example)) {
+    console.warn(
+      `Invalid example requested: ${example}. Available examples: ${ALLOWED_EXAMPLES.join(", ")}`,
+    );
+    return { code: null, error: "Invalid example name" };
+  }
+
+  try {
+    // Safe to use the example name since it's validated against our whitelist
+    const filePath = join(process.cwd(), "examples", `${example}.js`);
+    const code = await readFile(filePath, "utf-8");
+
+    return { code, error: null };
+  } catch (error) {
+    console.error(`Error reading example file ${example}:`, error);
+    return { code: null, error: "Failed to read example file" };
+  }
+}
+
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
   const example = formData.get("example") as string;
 
   if (example === "basics") {
     const question = formData.get("question") as string;
-    const output = await getCompletion(question);
+    const response = await getCompletion(question);
     return {
-      output,
+      output: response?.content,
     };
   }
 

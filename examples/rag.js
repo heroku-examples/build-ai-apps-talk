@@ -3,7 +3,8 @@ import { GithubRepoLoader } from "@langchain/community/document_loaders/web/gith
 import { PGVectorStore } from "@langchain/community/vectorstores/pgvector";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
-import { ChatOpenAI, OpenAIEmbeddings } from "@langchain/openai";
+//import { ChatOpenAI, OpenAIEmbeddings } from "@langchain/openai";
+import { HerokuMia, HerokuMiaEmbeddings } from "heroku-langchain";
 import { createStuffDocumentsChain } from "langchain/chains/combine_documents";
 import { createRetrievalChain } from "langchain/chains/retrieval";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
@@ -29,10 +30,11 @@ async function setupPgVector() {
       contentColumnName: "content",
       metadataColumnName: "metadata",
     },
+    chunkSize: 96,
   };
 
   const pgVectorStore = await PGVectorStore.initialize(
-    new OpenAIEmbeddings(),
+    new HerokuMiaEmbeddings(),
     pgOptions,
   );
 
@@ -95,9 +97,9 @@ export async function loadRepo(repoUrl) {
     [repoUrl, owner, repo],
   );
 
-  // Create a text transformer that will split the text into chunks of 1000 characters
+  // Create a text transformer that will split the text into chunks of 512 characters
   const splitter = new RecursiveCharacterTextSplitter({
-    chunkSize: 1000,
+    chunkSize: 1024,
     chunkOverlap: 0,
   });
 
@@ -107,8 +109,17 @@ export async function loadRepo(repoUrl) {
   // Vectorize repository content
   const pgVectorStore = await setupPgVector();
 
-  // Add the repository documents to the vector store
-  pgVectorStore.addDocuments(texts);
+  // Add the repository documents to the vector store in batches of 96
+  // const batchSize = 96;
+  // for (let i = 0; i < texts.length; i += batchSize) {
+  //   const batch = texts.slice(i, i + batchSize);
+  //   await pgVectorStore.addDocuments(batch);
+  //   console.log(`Added batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(texts.length / batchSize)} (${batch.length} documents)`);
+  // }
+  await pgVectorStore.addDocuments(texts);
+
+  console.log(`Successfully vectorized ${texts.length} documents`);
+
   return {
     repoUrl,
     owner,
@@ -119,8 +130,7 @@ export async function loadRepo(repoUrl) {
 // Ask a question about the repository
 export async function askQuestion({ question, repoUrl }) {
   // Create a chat model that will be used to answer the questions
-  const llm = new ChatOpenAI({
-    model: process.env.OPENAI_MODEL,
+  const llm = new HerokuMia({
     temperature: 0,
   });
 

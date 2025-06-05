@@ -10,8 +10,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { useExampleCode } from "@/utils/misc";
 import { useFetcher } from "@remix-run/react";
-import { useEffect, useState } from "react";
 
 interface BasicsAnswer {
   output: string;
@@ -19,16 +19,14 @@ interface BasicsAnswer {
 
 export function Basics() {
   const fetcher = useFetcher<BasicsAnswer>();
-  const [answer, setAnswer] = useState("");
+  const {
+    code,
+    loading: codeLoading,
+    error: codeError,
+  } = useExampleCode("basics");
 
   const isSubmitting = fetcher.state === "submitting";
-  const output = fetcher.data?.output;
-
-  useEffect(() => {
-    if (output) {
-      setAnswer(output);
-    }
-  }, [output]);
+  const answer = fetcher.data?.output;
 
   return (
     <Card className="w-full">
@@ -50,7 +48,6 @@ export function Basics() {
               onKeyDown={(e) => {
                 const keyCode = e.which || e.keyCode;
                 if (keyCode === 13) {
-                  setAnswer("");
                   fetcher.submit(e.currentTarget.form, {
                     method: "POST",
                   });
@@ -64,19 +61,17 @@ export function Basics() {
         </fetcher.Form>
         {isSubmitting && <LoadingIndicator className="my-4" />}
         {answer && <Answer content={answer} />}
-        <Highlight language="js">
-          {`import { OpenAI } from "@langchain/openai";
-
-// Create an instance of a LLM
-const llm = new OpenAI({
-  model: "gpt-3.5-turbo-instruct",
-  temperature: 0.5,
-});
-
-export async function getCompletion(input) {
-  return llm.invoke(input);
-}`}
-        </Highlight>
+        {codeLoading ? (
+          <LoadingIndicator className="my-4" />
+        ) : codeError ? (
+          <div className="my-4 p-4 bg-red-50 border border-red-200 rounded-md">
+            <p className="text-red-600 text-sm">
+              Failed to load example code: {codeError}
+            </p>
+          </div>
+        ) : (
+          <Highlight language="js">{code}</Highlight>
+        )}
       </CardContent>
     </Card>
   );

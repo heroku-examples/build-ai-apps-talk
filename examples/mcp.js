@@ -2,13 +2,11 @@ import "dotenv/config";
 import { HumanMessage } from "@langchain/core/messages";
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
 import { loadMcpTools } from "@langchain/mcp-adapters";
-import { ChatOpenAI } from "@langchain/openai";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
+import { HerokuMia } from "heroku-langchain";
 
-const model = new ChatOpenAI({
-  model: process.env.OPENAI_MODEL,
-});
+const model = new HerokuMia({});
 
 const transport = new StdioClientTransport({
   command: "npx",

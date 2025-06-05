@@ -2,13 +2,12 @@ import "dotenv/config";
 import { WikipediaQueryRun } from "@langchain/community/tools/wikipedia_query_run";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { DynamicTool } from "@langchain/core/tools";
-import { ChatOpenAI } from "@langchain/openai";
+import { HerokuMia } from "heroku-langchain";
 import { AgentExecutor } from "langchain/agents";
 import { createToolCallingAgent } from "langchain/agents";
 
 // Create an instance of a chat model
-const llm = new ChatOpenAI({
-  model: process.env.OPENAI_MODEL,
+const llm = new HerokuMia({
   temperature: 0,
 });
 
