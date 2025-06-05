@@ -4,9 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  heroku-langchain: link:../heroku-langchain
-
 importers:
 
   .:
@@ -78,8 +75,8 @@ importers:
         specifier: 4.21.2
         version: 4.21.2
       heroku-langchain:
-        specifier: link:../heroku-langchain
-        version: link:../heroku-langchain
+        specifier: 0.2.1
+        version: 0.2.1(openai@5.1.0(ws@8.18.2)(zod@3.25.51))(zod@3.25.51)
       ignore:
         specifier: ^5.3.2
         version: 5.3.2
@@ -2349,6 +2346,10 @@ packages:
 
   hastscript@6.0.0:
     resolution: {integrity: sha512-nDM6bvd7lIqDUiYEiu5Sl/+6ReP0BMk/2f4U/Rooccxkj0P5nm+acM5PrGJ/t5I8qPGiqZSE6hVAwZEdZIvP4w==}
+
+  heroku-langchain@0.2.1:
+    resolution: {integrity: sha512-sGAHP5h9D2kiNeRex5GDGs7yf20vM68wNdAP1oUI3DXv5gb0Tr7MBPo+jEg99iCat5AdGHBcUB7lddjYI47Zvw==}
+    engines: {node: '>=18.0.0'}
 
   highlight.js@10.7.3:
     resolution: {integrity: sha512-tzcUFauisWKNHaRkN4Wjl/ZA07gENAjFl3J/c480dprkGTg5EQstgaNFqBfUqCq54kZRIEcreTsAgF/m2quD7A==}
@@ -6023,6 +6024,14 @@ snapshots:
       hast-util-parse-selector: 2.2.5
       property-information: 5.6.0
       space-separated-tokens: 1.1.5
+
+  heroku-langchain@0.2.1(openai@5.1.0(ws@8.18.2)(zod@3.25.51))(zod@3.25.51):
+    dependencies:
+      '@langchain/core': 0.3.57(openai@5.1.0(ws@8.18.2)(zod@3.25.51))
+      zod-to-json-schema: 3.24.5(zod@3.25.51)
+    transitivePeerDependencies:
+      - openai
+      - zod
 
   highlight.js@10.7.3: {}
 
