@@ -3,7 +3,6 @@ import { GithubRepoLoader } from "@langchain/community/document_loaders/web/gith
 import { PGVectorStore } from "@langchain/community/vectorstores/pgvector";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
-//import { ChatOpenAI, OpenAIEmbeddings } from "@langchain/openai";
 import { HerokuMia, HerokuMiaEmbeddings } from "heroku-langchain";
 import { createStuffDocumentsChain } from "langchain/chains/combine_documents";
 import { createRetrievalChain } from "langchain/chains/retrieval";
@@ -110,12 +109,12 @@ export async function loadRepo(repoUrl) {
   const pgVectorStore = await setupPgVector();
 
   // Add the repository documents to the vector store in batches of 96
-  // const batchSize = 96;
-  // for (let i = 0; i < texts.length; i += batchSize) {
-  //   const batch = texts.slice(i, i + batchSize);
-  //   await pgVectorStore.addDocuments(batch);
-  //   console.log(`Added batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(texts.length / batchSize)} (${batch.length} documents)`);
-  // }
+  const batchSize = 96;
+  for (let i = 0; i < texts.length; i += batchSize) {
+    const batch = texts.slice(i, i + batchSize);
+    await pgVectorStore.addDocuments(batch);
+    console.log(`Added batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(texts.length / batchSize)} (${batch.length} documents)`);
+  }
   await pgVectorStore.addDocuments(texts);
 
   console.log(`Successfully vectorized ${texts.length} documents`);

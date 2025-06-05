@@ -6,7 +6,7 @@ import {
   ScrollRestoration,
   isRouteErrorResponse,
   useRouteError,
-} from "@remix-run/react";
+} from "react-router";
 
 import { GlobalPendingIndicator } from "@/components/global-pending-indicator";
 import { Header } from "@/components/header";

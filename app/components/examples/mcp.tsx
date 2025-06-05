@@ -11,8 +11,8 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useExampleCode } from "@/utils/misc";
-import { useFetcher } from "@remix-run/react";
 import { useEffect, useState } from "react";
+import { useFetcher } from "react-router";
 
 interface MCPAnswer {
   output: string;

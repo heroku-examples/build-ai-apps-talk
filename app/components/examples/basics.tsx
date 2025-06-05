@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useExampleCode } from "@/utils/misc";
-import { useFetcher } from "@remix-run/react";
+import { useFetcher } from "react-router";
 
 interface BasicsAnswer {
   output: string;

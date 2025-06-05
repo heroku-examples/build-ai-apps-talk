@@ -1,10 +1,7 @@
-import { createRequestHandler } from "@remix-run/express";
-import { installGlobals } from "@remix-run/node";
+import { createRequestHandler } from "@react-router/express";
 import compression from "compression";
 import express from "express";
 import morgan from "morgan";
-
-installGlobals();
 
 const viteDevServer =
   process.env.NODE_ENV === "production"
@@ -15,10 +12,10 @@ const viteDevServer =
         }),
       );
 
-// Create a request handler for Remix
-const remixHandler = createRequestHandler({
+// Create a request handler for React Router
+const reactRouterHandler = createRequestHandler({
   build: viteDevServer
-    ? () => viteDevServer.ssrLoadModule("virtual:remix/server-build")
+    ? () => viteDevServer.ssrLoadModule("virtual:react-router/server-build")
     : () => import("./build/server/index.js"),
 });
 
@@ -47,7 +44,7 @@ app.use(express.static("build/client", { maxAge: "1h" }));
 app.use(morgan("tiny"));
 
 // handle SSR requests
-app.all("*", remixHandler);
+app.all("*", reactRouterHandler);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () =>

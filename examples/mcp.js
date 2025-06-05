@@ -6,7 +6,7 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { HerokuMia } from "heroku-langchain";
 
-const model = new HerokuMia({});
+const model = new HerokuMia();
 
 const transport = new StdioClientTransport({
   command: "npx",

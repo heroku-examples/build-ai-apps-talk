@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { AIMessage, HumanMessage } from "@langchain/core/messages";
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import { agentQuestion } from "~/agent";
 import { getCompletion } from "~/basics";
 import { assistantQuestion } from "~/chat";

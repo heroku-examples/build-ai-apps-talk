@@ -1,5 +1,5 @@
 import { title } from "@/config.shared";
-import type { MetaFunction } from "@remix-run/node";
+import type { MetaFunction } from "react-router";
 export const meta: MetaFunction = () => {
   return [
     { title: `${title()} - Learning Resources` },

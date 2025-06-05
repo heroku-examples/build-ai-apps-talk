@@ -5,11 +5,12 @@
     "server.js",
     "examples/rag.js",
     "examples/assistant.js",
-    "examples/agent.js"
+    "examples/agent.js",
+    ".react-router/types/**/*"
   ],
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ES2022"],
-    "types": ["@remix-run/node", "node", "vite/client"],
+    "types": ["@react-router/node", "node", "vite/client"],
     "isolatedModules": true,
     "esModuleInterop": true,
     "jsx": "react-jsx",
@@ -26,6 +27,7 @@
       "@/*": ["./app/*"],
       "~/*": ["./examples/*"]
     },
+    "rootDirs": [".", "./.react-router/types"],
 
     // Vite takes care of building everything, not tsc.
     "noEmit": true

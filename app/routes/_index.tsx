@@ -9,7 +9,7 @@ import { Rag } from "@/components/examples/rag";
 import { Structured } from "@/components/examples/structured";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { title } from "@/config.shared";
-import type { MetaFunction } from "@remix-run/node";
+import type { MetaFunction } from "react-router";
 
 export const meta: MetaFunction = () => {
   return [
