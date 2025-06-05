@@ -1,6 +1,7 @@
 import { Highlight } from "@/components/hightlight/hightlight";
 import type { HTMLAttributes } from "react";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface AnswerProps {
   content: string;
@@ -16,6 +17,7 @@ export function Answer({ content }: AnswerProps) {
   return (
     <div className="space-y-4 text-gray-600">
       <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
         components={{
           p: ({ children }) => <p className="leading-relaxed">{children}</p>,
           a: ({ children, href }) => (
@@ -108,6 +110,28 @@ export function Answer({ content }: AnswerProps) {
             <ol className="list-decimal pl-6">{children}</ol>
           ),
           li: ({ children }) => <li className="leading-relaxed">{children}</li>,
+          table: ({ children }) => (
+            <div className="overflow-x-auto my-4">
+              <table className="min-w-full border-collapse border border-gray-300">
+                {children}
+              </table>
+            </div>
+          ),
+          thead: ({ children }) => (
+            <thead className="bg-gray-50">{children}</thead>
+          ),
+          tbody: ({ children }) => <tbody>{children}</tbody>,
+          tr: ({ children }) => <tr className="border-b border-gray-200">{children}</tr>,
+          th: ({ children }) => (
+            <th className="border border-gray-300 px-4 py-2 text-left font-semibold text-gray-900">
+              {children}
+            </th>
+          ),
+          td: ({ children }) => (
+            <td className="border border-gray-300 px-4 py-2 text-gray-700">
+              {children}
+            </td>
+          ),
         }}
       >
         {content}

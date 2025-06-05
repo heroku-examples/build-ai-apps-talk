@@ -14,8 +14,8 @@
   "dependencies": {
     "@langchain/community": "^0.3.45",
     "@langchain/core": "^0.3.57",
-    "@langchain/langgraph": "^0.2.74",
-    "@langchain/mcp-adapters": "^0.3.4",
+    "@langchain/langgraph": "^0.3.0",
+    "@langchain/mcp-adapters": "^0.5.2",
     "@langchain/openai": "^0.5.12",
     "@modelcontextprotocol/sdk": "^1.12.1",
     "@radix-ui/react-slot": "^1.2.3",
@@ -46,6 +46,7 @@
     "react-markdown": "^10.1.0",
     "react-router": "^7.0.0",
     "react-syntax-highlighter": "^15.6.1",
+    "remark-gfm": "^4.0.1",
     "remix-utils": "8.7.0",
     "tailwind-merge": "3.3.0",
     "tailwindcss-animate": "1.0.7",
