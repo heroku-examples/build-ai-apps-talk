@@ -121,7 +121,9 @@ export function Answer({ content }: AnswerProps) {
             <thead className="bg-gray-50">{children}</thead>
           ),
           tbody: ({ children }) => <tbody>{children}</tbody>,
-          tr: ({ children }) => <tr className="border-b border-gray-200">{children}</tr>,
+          tr: ({ children }) => (
+            <tr className="border-b border-gray-200">{children}</tr>
+          ),
           th: ({ children }) => (
             <th className="border border-gray-300 px-4 py-2 text-left font-semibold text-gray-900">
               {children}

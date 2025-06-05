@@ -113,7 +113,9 @@ export async function loadRepo(repoUrl) {
   for (let i = 0; i < texts.length; i += batchSize) {
     const batch = texts.slice(i, i + batchSize);
     await pgVectorStore.addDocuments(batch);
-    console.log(`Added batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(texts.length / batchSize)} (${batch.length} documents)`);
+    console.log(
+      `Added batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(texts.length / batchSize)} (${batch.length} documents)`,
+    );
   }
   await pgVectorStore.addDocuments(texts);
 
