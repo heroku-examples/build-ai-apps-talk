@@ -70,36 +70,36 @@ The application will be available at `http://localhost:3000`
     heroku create <app-name>
     ```
 
-1. Add PostgreSQL addon:
+2. Add PostgreSQL addon:
 
     ```shell
     heroku addons:create heroku-postgresql:essential-0
     ```
 
-1. Add Managed Inference and Agents Add-on:
+3. Add Managed Inference and Agents Add-on:
 
     ```shell
-    heroku ai:models:create claude-3-7-sonnet
-    heroku ai:models:create cohere-embed-multilingual
+    heroku ai:models:create claude-3-7-sonnet --as INFERENCE
+    heroku ai:models:create cohere-embed-multilingual --as EMBEDDING
     ```
 
-    > [!NOTE]
-    > You can find the list of available models by running: `heroku ai:models:list`
+> [!NOTE]
+> You can find the list of available models by running: `heroku ai:models:list`
 
-1. Set up the database schema:
+4. Set up the database schema:
 
     ```shell
     heroku pg:psql -f data/schema.sql
     ```
 
-1. Configure environment variables:
+5. Configure environment variables:
 
     ```shell
     heroku config:set OPENWEATHER_API_KEY=your_key
     ...
     ```
 
-1. Deploy to Heroku:
+6. Deploy to Heroku:
 
     ```shell
     git push heroku main
