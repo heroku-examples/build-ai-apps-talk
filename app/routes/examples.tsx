@@ -20,6 +20,7 @@ import {
 import { runMultiAgent } from "~/multi-agent";
 import { askQuestion, getRepositories, loadRepo } from "~/rag";
 import { generateRecipe } from "~/structured";
+import { askSupervisorQuestion, generateSupervisorGraph } from "~/supervisor";
 
 // Whitelist of allowed example files - prevents path traversal attacks
 // To add a new example:
@@ -33,6 +34,7 @@ const ALLOWED_EXAMPLES = [
   "lcel",
   "agent",
   "langraph",
+  "supervisor",
   "mcp",
   "multi-agent",
   "rag",
@@ -154,6 +156,17 @@ export async function action({ request }: ActionFunctionArgs) {
     return {
       firstAnswer,
       secondAnswer,
+      graph,
+    };
+  }
+
+  if (example === "supervisor") {
+    const question = formData.get("question") as string;
+    const output = await askSupervisorQuestion(question);
+    const graph = await generateSupervisorGraph();
+
+    return {
+      output,
       graph,
     };
   }

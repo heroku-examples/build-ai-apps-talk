@@ -7,6 +7,7 @@ import { MCP } from "@/components/examples/mcp";
 import { MultiAgent } from "@/components/examples/multi-agent";
 import { Rag } from "@/components/examples/rag";
 import { Structured } from "@/components/examples/structured";
+import { Supervisor } from "@/components/examples/supervisor";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { title } from "@/config.shared";
 import type { MetaFunction } from "react-router";
@@ -68,14 +69,20 @@ export default function Index() {
             >
               🕸️ LangGraph
             </TabsTrigger>
+            <TabsTrigger value="mcp" className="w-full justify-start text-left">
+              🔌 MCP
+            </TabsTrigger>
             <TabsTrigger
               value="multi-agent"
               className="w-full justify-start text-left"
             >
               👥 Multi-Agent
             </TabsTrigger>
-            <TabsTrigger value="mcp" className="w-full justify-start text-left">
-              🔌 MCP
+            <TabsTrigger
+              value="supervisor"
+              className="w-full justify-start text-left"
+            >
+              👨‍💼 Supervisor
             </TabsTrigger>
           </TabsList>
         </div>
@@ -103,11 +110,14 @@ export default function Index() {
           <TabsContent value="langraph" className="mt-0">
             <LangGraph />
           </TabsContent>
+          <TabsContent value="mcp" className="mt-0">
+            <MCP />
+          </TabsContent>
           <TabsContent value="multi-agent" className="mt-0">
             <MultiAgent />
           </TabsContent>
-          <TabsContent value="mcp" className="mt-0">
-            <MCP />
+          <TabsContent value="supervisor" className="mt-0">
+            <Supervisor />
           </TabsContent>
         </div>
       </Tabs>
