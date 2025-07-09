@@ -11,8 +11,11 @@ export function Header() {
           </span>
         </Link>
       </div>
-      <Link className="text-heroku-purple" to="/resources">
-        Learning Resources
+      <Link
+        className="inline-flex items-center px-6 py-2.5 bg-gradient-to-r from-heroku-purple to-heroku-dark text-white font-semibold rounded-lg shadow-lg hover:shadow-xl hover:from-heroku-dark hover:to-heroku-purple transition-all duration-300 ease-in-out transform hover:-translate-y-0.5 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-heroku-light focus:ring-opacity-50"
+        to="/resources"
+      >
+        📚 Learning Resources
       </Link>
     </header>
   );
