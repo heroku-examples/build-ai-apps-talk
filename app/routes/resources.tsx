@@ -93,6 +93,12 @@ const resourceSections: ResourceSection[] = [
         url: "https://github.com/heroku-reference-apps",
       },
       {
+        title: "Heroku LangChain.js SDK",
+        description:
+          "Unofficial LangChain adapter for Heroku Managed Inference and Agents",
+        url: "https://www.npmjs.com/package/heroku-langchain",
+      },
+      {
         title: "Heroku Cloud Native Buildpacks",
         description:
           "Official buildpacks for deploying applications with cloud-native approach",
