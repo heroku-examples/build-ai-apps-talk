@@ -19,7 +19,11 @@ interface SupervisorAnswer {
   graph?: string;
 }
 
-export function Supervisor() {
+interface SupervisorProps {
+  enablePlayground: boolean;
+}
+
+export function Supervisor({ enablePlayground }: SupervisorProps) {
   const fetcher = useFetcher<SupervisorAnswer>();
   const [answer, setAnswer] = useState("");
   const [graphImage, setGraphImage] = useState<string | null>(null);
@@ -49,55 +53,59 @@ export function Supervisor() {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          <fetcher.Form method="post" action="/examples">
-            <div className="space-y-2">
-              <Input type="hidden" name="example" value="supervisor" />
-              <div className="flex space-x-4">
-                <Input
-                  type="text"
-                  name="question"
-                  value={question}
-                  onChange={(e) => setQuestion(e.currentTarget.value)}
-                  placeholder="Ask about weather, math, or general knowledge..."
-                  className="flex-grow p-2"
-                  onKeyDown={(e) => {
-                    const keyCode = e.which || e.keyCode;
-                    if (keyCode === 13) {
-                      fetcher.submit(e.currentTarget.form, {
-                        method: "POST",
-                      });
-                    }
-                  }}
-                />
-                <Button
-                  type="submit"
-                  disabled={!question || isSubmitting}
-                  className="p-2"
-                >
-                  Submit
-                </Button>
-              </div>
-            </div>
-          </fetcher.Form>
+          {enablePlayground && (
+            <>
+              <fetcher.Form method="post" action="/examples">
+                <div className="space-y-2">
+                  <Input type="hidden" name="example" value="supervisor" />
+                  <div className="flex space-x-4">
+                    <Input
+                      type="text"
+                      name="question"
+                      value={question}
+                      onChange={(e) => setQuestion(e.currentTarget.value)}
+                      placeholder="Ask about weather, math, or general knowledge..."
+                      className="flex-grow p-2"
+                      onKeyDown={(e) => {
+                        const keyCode = e.which || e.keyCode;
+                        if (keyCode === 13) {
+                          fetcher.submit(e.currentTarget.form, {
+                            method: "POST",
+                          });
+                        }
+                      }}
+                    />
+                    <Button
+                      type="submit"
+                      disabled={!question || isSubmitting}
+                      className="p-2"
+                    >
+                      Submit
+                    </Button>
+                  </div>
+                </div>
+              </fetcher.Form>
 
-          {isSubmitting && <LoadingIndicator className="my-4" />}
+              {isSubmitting && <LoadingIndicator className="my-4" />}
 
-          {answer && (
-            <div className="space-y-2">
-              <h3 className="font-semibold">Agent Response:</h3>
-              <Answer content={answer} />
-            </div>
-          )}
+              {answer && (
+                <div className="space-y-2">
+                  <h3 className="font-semibold">Agent Response:</h3>
+                  <Answer content={answer} />
+                </div>
+              )}
 
-          {graphImage && (
-            <div className="space-y-2">
-              <h3 className="font-semibold">Supervisor Graph Structure:</h3>
-              <img
-                src={graphImage}
-                alt="Supervisor pattern graph showing routing logic"
-                className="max-w-full"
-              />
-            </div>
+              {graphImage && (
+                <div className="space-y-2">
+                  <h3 className="font-semibold">Supervisor Graph Structure:</h3>
+                  <img
+                    src={graphImage}
+                    alt="Supervisor pattern graph showing routing logic"
+                    className="max-w-full"
+                  />
+                </div>
+              )}
+            </>
           )}
         </div>
         {codeLoading ? (

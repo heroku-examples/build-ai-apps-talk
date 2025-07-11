@@ -24,7 +24,11 @@ interface Message {
   text: string;
 }
 
-export function Chat() {
+interface ChatProps {
+  enablePlayground: boolean;
+}
+
+export function Chat({ enablePlayground }: ChatProps) {
   const fetcher = useFetcher<ChatAnswer>();
   const [messages, setMessages] = useState<Message[]>([]);
   const [message, setMessage] = useState<string>();
@@ -70,80 +74,84 @@ export function Chat() {
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        {messages && messages.length > 0 && (
-          <div
-            ref={chatContainerRef}
-            className="h-[400px] overflow-y-auto border rounded-lg p-3 bg-white"
-          >
-            <div className="space-y-3">
-              {messages.map((message) => (
-                <div
-                  key={message.key}
-                  className={`flex ${message.type === "system" ? "justify-end" : "justify-start"}`}
-                >
-                  <div
-                    className={`max-w-[80%] min-w-[200px] rounded-lg p-2 ${
-                      message.type === "system"
-                        ? "bg-blue-100 text-blue-900"
-                        : "bg-gray-100 text-gray-900"
-                    }`}
-                  >
-                    <div className="text-sm font-semibold mb-0.5">
-                      {message.type === "system" ? "Assistant" : "You"}
+        {enablePlayground && (
+          <>
+            {messages && messages.length > 0 && (
+              <div
+                ref={chatContainerRef}
+                className="h-[400px] overflow-y-auto border rounded-lg p-3 bg-white"
+              >
+                <div className="space-y-3">
+                  {messages.map((message) => (
+                    <div
+                      key={message.key}
+                      className={`flex ${message.type === "system" ? "justify-end" : "justify-start"}`}
+                    >
+                      <div
+                        className={`max-w-[80%] min-w-[200px] rounded-lg p-2 ${
+                          message.type === "system"
+                            ? "bg-blue-100 text-blue-900"
+                            : "bg-gray-100 text-gray-900"
+                        }`}
+                      >
+                        <div className="text-sm font-semibold mb-0.5">
+                          {message.type === "system" ? "Assistant" : "You"}
+                        </div>
+                        <Answer content={message.text} />
+                      </div>
                     </div>
-                    <Answer content={message.text} />
-                  </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </div>
+              </div>
+            )}
+            {isSubmitting && <LoadingIndicator className="my-4" />}
+            <fetcher.Form method="post" action="/examples">
+              <Input type="hidden" name="example" value="chat" />
+              <div className="flex space-x-4">
+                <Input
+                  type="text"
+                  name="skill"
+                  placeholder="RPG"
+                  className="w-1/12 p-2"
+                />
+                <Input
+                  type="text"
+                  name="message"
+                  value={message}
+                  placeholder="Hello, my name is Julián"
+                  className="flex-grow p-2"
+                  onChange={(e) => {
+                    setMessage(e.currentTarget.value);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      if (message?.trim()) {
+                        handleAddMessage("human", message);
+                        fetcher.submit(e.currentTarget.form, {
+                          method: "POST",
+                        });
+                        setMessage("");
+                      }
+                    }
+                  }}
+                />
+                <Button
+                  type="submit"
+                  className="p-2"
+                  onClick={(e) => {
+                    if (message?.trim()) {
+                      handleAddMessage("human", message);
+                      setMessage("");
+                    }
+                  }}
+                >
+                  Send
+                </Button>
+              </div>
+            </fetcher.Form>
+          </>
         )}
-        {isSubmitting && <LoadingIndicator className="my-4" />}
-        <fetcher.Form method="post" action="/examples">
-          <Input type="hidden" name="example" value="chat" />
-          <div className="flex space-x-4">
-            <Input
-              type="text"
-              name="skill"
-              placeholder="RPG"
-              className="w-1/12 p-2"
-            />
-            <Input
-              type="text"
-              name="message"
-              value={message}
-              placeholder="Hello, my name is Julián"
-              className="flex-grow p-2"
-              onChange={(e) => {
-                setMessage(e.currentTarget.value);
-              }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  if (message?.trim()) {
-                    handleAddMessage("human", message);
-                    fetcher.submit(e.currentTarget.form, {
-                      method: "POST",
-                    });
-                    setMessage("");
-                  }
-                }
-              }}
-            />
-            <Button
-              type="submit"
-              className="p-2"
-              onClick={(e) => {
-                if (message?.trim()) {
-                  handleAddMessage("human", message);
-                  setMessage("");
-                }
-              }}
-            >
-              Send
-            </Button>
-          </div>
-        </fetcher.Form>
         {codeLoading ? (
           <LoadingIndicator className="my-4" />
         ) : (

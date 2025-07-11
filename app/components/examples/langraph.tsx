@@ -20,7 +20,11 @@ interface LangGraphAnswer {
   graph?: string;
 }
 
-export function LangGraph() {
+interface LangGraphProps {
+  enablePlayground: boolean;
+}
+
+export function LangGraph({ enablePlayground }: LangGraphProps) {
   const fetcher = useFetcher<LangGraphAnswer>();
   const [firstAnswer, setFirstAnswer] = useState("");
   const [secondAnswer, setSecondAnswer] = useState("");
@@ -55,62 +59,68 @@ export function LangGraph() {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          <fetcher.Form method="post" action="/examples">
-            <div className="space-y-2">
-              <Input type="hidden" name="example" value="langraph" />
-              <div className="flex space-x-4">
-                <Input
-                  type="text"
-                  name="firstQuestion"
-                  value={firstQuestion}
-                  onChange={(e) => setFirstQuestion(e.currentTarget.value)}
-                  placeholder="Ask your first question..."
-                  className="flex-grow p-2"
-                />
-                <Input
-                  type="text"
-                  name="secondQuestion"
-                  value={secondQuestion}
-                  onChange={(e) => setSecondQuestion(e.currentTarget.value)}
-                  placeholder="Ask your second question..."
-                  className="flex-grow p-2"
-                />
-                <Button
-                  type="submit"
-                  disabled={!firstQuestion || !secondQuestion || isSubmitting}
-                  className="p-2"
-                >
-                  Submit
-                </Button>
-              </div>
-            </div>
-          </fetcher.Form>
+          {enablePlayground && (
+            <>
+              <fetcher.Form method="post" action="/examples">
+                <div className="space-y-2">
+                  <Input type="hidden" name="example" value="langraph" />
+                  <div className="flex space-x-4">
+                    <Input
+                      type="text"
+                      name="firstQuestion"
+                      value={firstQuestion}
+                      onChange={(e) => setFirstQuestion(e.currentTarget.value)}
+                      placeholder="Ask your first question..."
+                      className="flex-grow p-2"
+                    />
+                    <Input
+                      type="text"
+                      name="secondQuestion"
+                      value={secondQuestion}
+                      onChange={(e) => setSecondQuestion(e.currentTarget.value)}
+                      placeholder="Ask your second question..."
+                      className="flex-grow p-2"
+                    />
+                    <Button
+                      type="submit"
+                      disabled={
+                        !firstQuestion || !secondQuestion || isSubmitting
+                      }
+                      className="p-2"
+                    >
+                      Submit
+                    </Button>
+                  </div>
+                </div>
+              </fetcher.Form>
 
-          {isSubmitting && <LoadingIndicator className="my-4" />}
+              {isSubmitting && <LoadingIndicator className="my-4" />}
 
-          {firstAnswer && (
-            <div className="space-y-2">
-              <h3 className="font-semibold">First Answer:</h3>
-              <Answer content={firstAnswer} />
-            </div>
-          )}
+              {firstAnswer && (
+                <div className="space-y-2">
+                  <h3 className="font-semibold">First Answer:</h3>
+                  <Answer content={firstAnswer} />
+                </div>
+              )}
 
-          {secondAnswer && (
-            <div className="space-y-2">
-              <h3 className="font-semibold">Second Answer:</h3>
-              <Answer content={secondAnswer} />
-            </div>
-          )}
+              {secondAnswer && (
+                <div className="space-y-2">
+                  <h3 className="font-semibold">Second Answer:</h3>
+                  <Answer content={secondAnswer} />
+                </div>
+              )}
 
-          {graphImage && (
-            <div className="space-y-2">
-              <h3 className="font-semibold">Agent's Thought Process:</h3>
-              <img
-                src={graphImage}
-                alt="Agent's thought process graph"
-                className="max-w-full"
-              />
-            </div>
+              {graphImage && (
+                <div className="space-y-2">
+                  <h3 className="font-semibold">Agent's Thought Process:</h3>
+                  <img
+                    src={graphImage}
+                    alt="Agent's thought process graph"
+                    className="max-w-full"
+                  />
+                </div>
+              )}
+            </>
           )}
         </div>
         {codeLoading ? (

@@ -25,7 +25,11 @@ interface RAGAnswer {
   output: string;
 }
 
-export function Rag() {
+interface RagProps {
+  enablePlayground: boolean;
+}
+
+export function Rag({ enablePlayground }: RagProps) {
   const questionFetcher = useFetcher<RAGAnswer>();
   const repoFetcher = useFetcher<RepoData>();
   const reposFetcher = useFetcher<RepoData[]>();
@@ -134,107 +138,117 @@ export function Rag() {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          <div className="flex space-x-4">
-            <div className="relative w-[300px]">
-              <div className="flex items-center space-x-2 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background">
-                <IconBrandGithub className="h-4 w-4" />
-                <select
-                  value={repoUrl}
-                  onChange={(e) => handleRepoSelect(e.target.value)}
-                  className="w-full bg-transparent focus:outline-none"
-                >
-                  <option value="">Select a repository</option>
-                  {repositories.map((repo) => (
-                    <option key={repo.repoUrl} value={repo.repoUrl}>
-                      {repo.owner}/{repo.repo}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-            <div className="flex-grow">
-              <repoFetcher.Form
-                method="post"
-                action="/examples"
-                className="flex space-x-4"
-                onSubmit={handleRepoSubmit}
-              >
-                <Input type="hidden" name="example" value="rag-load" />
-                <div className="relative flex-grow">
-                  <Input
-                    type="text"
-                    name="repo"
-                    placeholder="GitHub repository URL (e.g., owner/repo)"
-                    className="flex-grow p-2"
-                    disabled={isRepoSubmitting || repoUrl !== ""}
-                  />
-                  {error && (
-                    <p className="mt-1 left-0 text-sm text-red-500">{error}</p>
-                  )}
+          {enablePlayground && (
+            <>
+              <div className="flex space-x-4">
+                <div className="relative w-[300px]">
+                  <div className="flex items-center space-x-2 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background">
+                    <IconBrandGithub className="h-4 w-4" />
+                    <select
+                      value={repoUrl}
+                      onChange={(e) => handleRepoSelect(e.target.value)}
+                      className="w-full bg-transparent focus:outline-none"
+                    >
+                      <option value="">Select a repository</option>
+                      {repositories.map((repo) => (
+                        <option key={repo.repoUrl} value={repo.repoUrl}>
+                          {repo.owner}/{repo.repo}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
-                <Button
-                  type="submit"
-                  className="p-2"
-                  disabled={isRepoSubmitting || repoUrl !== ""}
-                >
-                  Load repository
-                </Button>
-              </repoFetcher.Form>
-            </div>
-          </div>
-          <div className="p-2">
-            {isRepoSubmitting && <p>Loading repository content...</p>}
-            {(repoData || repoUrl) && (
-              <div className="mt-2">
-                <a
-                  href={formatRepoUrl(repoUrl)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-500 hover:underline"
-                >
-                  View repository on GitHub
-                </a>
-              </div>
-            )}
-          </div>
-          <div>
-            {(repoData || repoUrl) && (
-              <questionFetcher.Form method="post" action="/examples">
-                <Input type="hidden" name="example" value="rag" />
-                <Input
-                  type="hidden"
-                  name="repoUrl"
-                  value={formatRepoUrl(repoUrl)}
-                />
-                <div className="flex space-x-4">
-                  <Input
-                    type="text"
-                    name="question"
-                    value={question}
-                    placeholder="Ask a question about the repository..."
-                    className="flex-grow p-2"
-                    onChange={(e) => {
-                      setQuestion(e.currentTarget.value);
-                    }}
-                    onKeyDown={(e) => {
-                      const keyCode = e.which || e.keyCode;
-                      if (keyCode === 13) {
-                        setAnswer("");
-                        questionFetcher.submit(e.currentTarget.form, {
-                          method: "POST",
-                        });
-                      }
-                    }}
-                  />
-                  <Button type="submit" className="p-2" disabled={isSubmitting}>
-                    Ask
-                  </Button>
+                <div className="flex-grow">
+                  <repoFetcher.Form
+                    method="post"
+                    action="/examples"
+                    className="flex space-x-4"
+                    onSubmit={handleRepoSubmit}
+                  >
+                    <Input type="hidden" name="example" value="rag-load" />
+                    <div className="relative flex-grow">
+                      <Input
+                        type="text"
+                        name="repo"
+                        placeholder="GitHub repository URL (e.g., owner/repo)"
+                        className="flex-grow p-2"
+                        disabled={isRepoSubmitting || repoUrl !== ""}
+                      />
+                      {error && (
+                        <p className="mt-1 left-0 text-sm text-red-500">
+                          {error}
+                        </p>
+                      )}
+                    </div>
+                    <Button
+                      type="submit"
+                      className="p-2"
+                      disabled={isRepoSubmitting || repoUrl !== ""}
+                    >
+                      Load repository
+                    </Button>
+                  </repoFetcher.Form>
                 </div>
-              </questionFetcher.Form>
-            )}
-          </div>
-          {isSubmitting && <LoadingIndicator className="my-4" />}
-          {answer && <Answer content={answer} />}
+              </div>
+              <div className="p-2">
+                {isRepoSubmitting && <p>Loading repository content...</p>}
+                {(repoData || repoUrl) && (
+                  <div className="mt-2">
+                    <a
+                      href={formatRepoUrl(repoUrl)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500 hover:underline"
+                    >
+                      View repository on GitHub
+                    </a>
+                  </div>
+                )}
+              </div>
+              <div>
+                {(repoData || repoUrl) && (
+                  <questionFetcher.Form method="post" action="/examples">
+                    <Input type="hidden" name="example" value="rag" />
+                    <Input
+                      type="hidden"
+                      name="repoUrl"
+                      value={formatRepoUrl(repoUrl)}
+                    />
+                    <div className="flex space-x-4">
+                      <Input
+                        type="text"
+                        name="question"
+                        value={question}
+                        placeholder="Ask a question about the repository..."
+                        className="flex-grow p-2"
+                        onChange={(e) => {
+                          setQuestion(e.currentTarget.value);
+                        }}
+                        onKeyDown={(e) => {
+                          const keyCode = e.which || e.keyCode;
+                          if (keyCode === 13) {
+                            setAnswer("");
+                            questionFetcher.submit(e.currentTarget.form, {
+                              method: "POST",
+                            });
+                          }
+                        }}
+                      />
+                      <Button
+                        type="submit"
+                        className="p-2"
+                        disabled={isSubmitting}
+                      >
+                        Ask
+                      </Button>
+                    </div>
+                  </questionFetcher.Form>
+                )}
+              </div>
+              {isSubmitting && <LoadingIndicator className="my-4" />}
+              {answer && <Answer content={answer} />}
+            </>
+          )}
         </div>
         {codeLoading ? (
           <LoadingIndicator className="my-4" />

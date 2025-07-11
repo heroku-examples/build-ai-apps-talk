@@ -11,7 +11,8 @@ import { Supervisor } from "@/components/examples/supervisor";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { title } from "@/config.shared";
 import { useState } from "react";
-import type { MetaFunction } from "react-router";
+import type { LoaderFunctionArgs, MetaFunction } from "react-router";
+import { useLoaderData } from "react-router";
 
 export const meta: MetaFunction = () => {
   return [
@@ -24,7 +25,13 @@ export const meta: MetaFunction = () => {
   ];
 };
 
+export async function loader({ request }: LoaderFunctionArgs) {
+  const enablePlayground = process.env.ENABLE_PLAYGROUND === "true";
+  return { enablePlayground };
+}
+
 export default function Index() {
+  const { enablePlayground } = useLoaderData<typeof loader>();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
@@ -166,39 +173,61 @@ export default function Index() {
               👨‍💼 Supervisor
             </TabsTrigger>
           </TabsList>
+
+          {/* Playground Status Badge */}
+          <div className="mt-3 w-full">
+            <div
+              className={`
+              inline-flex items-center px-3 py-1 rounded-full text-xs font-medium
+              ${
+                enablePlayground
+                  ? "bg-green-100 text-green-800 border border-green-200"
+                  : "bg-gray-100 text-gray-600 border border-gray-200"
+              }
+            `}
+            >
+              <div
+                className={`
+                w-2 h-2 rounded-full mr-2
+                ${enablePlayground ? "bg-green-500" : "bg-gray-400"}
+              `}
+              />
+              Playground {enablePlayground ? "Enabled" : "Disabled"}
+            </div>
+          </div>
         </div>
 
         {/* Right Content Area */}
         <div className="flex-1 min-w-0 md:ml-0 ml-0">
           <TabsContent value="basics" className="mt-0">
-            <Basics />
+            <Basics enablePlayground={enablePlayground} />
           </TabsContent>
           <TabsContent value="structured" className="mt-0">
-            <Structured />
+            <Structured enablePlayground={enablePlayground} />
           </TabsContent>
           <TabsContent value="lcel" className="mt-0">
-            <LCEL />
+            <LCEL enablePlayground={enablePlayground} />
           </TabsContent>
           <TabsContent value="chat" className="mt-0">
-            <Chat />
+            <Chat enablePlayground={enablePlayground} />
           </TabsContent>
           <TabsContent value="agents" className="mt-0">
-            <Agent />
+            <Agent enablePlayground={enablePlayground} />
           </TabsContent>
           <TabsContent value="rag" className="mt-0">
-            <Rag />
+            <Rag enablePlayground={enablePlayground} />
           </TabsContent>
           <TabsContent value="langraph" className="mt-0">
-            <LangGraph />
+            <LangGraph enablePlayground={enablePlayground} />
           </TabsContent>
           <TabsContent value="mcp" className="mt-0">
-            <MCP />
+            <MCP enablePlayground={enablePlayground} />
           </TabsContent>
           <TabsContent value="multi-agent" className="mt-0">
-            <MultiAgent />
+            <MultiAgent enablePlayground={enablePlayground} />
           </TabsContent>
           <TabsContent value="supervisor" className="mt-0">
-            <Supervisor />
+            <Supervisor enablePlayground={enablePlayground} />
           </TabsContent>
         </div>
       </Tabs>

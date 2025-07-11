@@ -33,7 +33,11 @@ const PROGRAMMING_LANGUAGES = [
   "TypeScript",
 ];
 
-export function LCEL() {
+interface LCELProps {
+  enablePlayground: boolean;
+}
+
+export function LCEL({ enablePlayground }: LCELProps) {
   const fetcher = useFetcher<LCELAnswer>();
   const [answer, setAnswer] = useState("");
   const [language, setLanguage] = useState("JavaScript");
@@ -61,34 +65,38 @@ export function LCEL() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <fetcher.Form method="post" action="/examples">
-          <Input type="hidden" name="example" value="lcel" />
-          <div className="flex space-x-4">
-            <select
-              name="language"
-              value={language}
-              onChange={(e) => setLanguage(e.target.value)}
-              className="w-[180px] rounded-md border border-input bg-background px-3 py-2"
-            >
-              {PROGRAMMING_LANGUAGES.map((lang) => (
-                <option key={lang} value={lang}>
-                  {lang}
-                </option>
-              ))}
-            </select>
-            <Input
-              type="text"
-              name="problem"
-              placeholder="Reverse a string"
-              className="flex-grow p-2"
-            />
-            <Button type="submit" className="p-2">
-              Generate Code
-            </Button>
-          </div>
-        </fetcher.Form>
-        {isSubmitting && <LoadingIndicator className="my-4" />}
-        {answer && <Answer content={answer} />}
+        {enablePlayground && (
+          <>
+            <fetcher.Form method="post" action="/examples">
+              <Input type="hidden" name="example" value="lcel" />
+              <div className="flex space-x-4">
+                <select
+                  name="language"
+                  value={language}
+                  onChange={(e) => setLanguage(e.target.value)}
+                  className="w-[180px] rounded-md border border-input bg-background px-3 py-2"
+                >
+                  {PROGRAMMING_LANGUAGES.map((lang) => (
+                    <option key={lang} value={lang}>
+                      {lang}
+                    </option>
+                  ))}
+                </select>
+                <Input
+                  type="text"
+                  name="problem"
+                  placeholder="Reverse a string"
+                  className="flex-grow p-2"
+                />
+                <Button type="submit" className="p-2">
+                  Generate Code
+                </Button>
+              </div>
+            </fetcher.Form>
+            {isSubmitting && <LoadingIndicator className="my-4" />}
+            {answer && <Answer content={answer} />}
+          </>
+        )}
         {codeLoading ? (
           <LoadingIndicator className="my-4" />
         ) : codeError ? (

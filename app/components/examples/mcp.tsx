@@ -19,7 +19,11 @@ interface MCPAnswer {
   graph?: string;
 }
 
-export function MCP() {
+interface MCPProps {
+  enablePlayground: boolean;
+}
+
+export function MCP({ enablePlayground }: MCPProps) {
   const fetcher = useFetcher<MCPAnswer>();
   const [answer, setAnswer] = useState("");
   const [question, setQuestion] = useState("");
@@ -51,44 +55,48 @@ export function MCP() {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          <fetcher.Form method="post" action="/examples">
-            <Input type="hidden" name="example" value="mcp" />
-            <div className="flex space-x-4">
-              <Input
-                type="text"
-                name="question"
-                value={question}
-                placeholder="Ask a question about the database..."
-                className="flex-grow p-2"
-                onChange={(e) => {
-                  setQuestion(e.currentTarget.value);
-                }}
-                onKeyDown={(e) => {
-                  const keyCode = e.which || e.keyCode;
-                  if (keyCode === 13) {
-                    setAnswer("");
-                    fetcher.submit(e.currentTarget.form, {
-                      method: "POST",
-                    });
-                  }
-                }}
-              />
-              <Button type="submit" className="p-2">
-                Ask
-              </Button>
-            </div>
-          </fetcher.Form>
-          {isSubmitting && <LoadingIndicator className="my-4" />}
-          {answer && <Answer content={answer} />}
-          {graphImage && (
-            <div className="space-y-2">
-              <h3 className="font-semibold">Agent's Thought Process:</h3>
-              <img
-                src={graphImage}
-                alt="Agent's thought process graph"
-                className="max-w-full"
-              />
-            </div>
+          {enablePlayground && (
+            <>
+              <fetcher.Form method="post" action="/examples">
+                <Input type="hidden" name="example" value="mcp" />
+                <div className="flex space-x-4">
+                  <Input
+                    type="text"
+                    name="question"
+                    value={question}
+                    placeholder="Ask a question about the database..."
+                    className="flex-grow p-2"
+                    onChange={(e) => {
+                      setQuestion(e.currentTarget.value);
+                    }}
+                    onKeyDown={(e) => {
+                      const keyCode = e.which || e.keyCode;
+                      if (keyCode === 13) {
+                        setAnswer("");
+                        fetcher.submit(e.currentTarget.form, {
+                          method: "POST",
+                        });
+                      }
+                    }}
+                  />
+                  <Button type="submit" className="p-2">
+                    Ask
+                  </Button>
+                </div>
+              </fetcher.Form>
+              {isSubmitting && <LoadingIndicator className="my-4" />}
+              {answer && <Answer content={answer} />}
+              {graphImage && (
+                <div className="space-y-2">
+                  <h3 className="font-semibold">Agent's Thought Process:</h3>
+                  <img
+                    src={graphImage}
+                    alt="Agent's thought process graph"
+                    className="max-w-full"
+                  />
+                </div>
+              )}
+            </>
           )}
         </div>
         {codeLoading ? (

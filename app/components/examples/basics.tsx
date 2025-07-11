@@ -17,7 +17,11 @@ interface BasicsAnswer {
   output: string;
 }
 
-export function Basics() {
+interface BasicsProps {
+  enablePlayground: boolean;
+}
+
+export function Basics({ enablePlayground }: BasicsProps) {
   const fetcher = useFetcher<BasicsAnswer>();
   const {
     code,
@@ -37,30 +41,34 @@ export function Basics() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <fetcher.Form method="post" action="/examples">
-          <Input type="hidden" name="example" value="basics" />
-          <div className="flex space-x-4">
-            <Input
-              type="text"
-              name="question"
-              placeholder="What is love?"
-              className="flex-grow p-2"
-              onKeyDown={(e) => {
-                const keyCode = e.which || e.keyCode;
-                if (keyCode === 13) {
-                  fetcher.submit(e.currentTarget.form, {
-                    method: "POST",
-                  });
-                }
-              }}
-            />
-            <Button type="submit" className="p-2">
-              Submit
-            </Button>
-          </div>
-        </fetcher.Form>
-        {isSubmitting && <LoadingIndicator className="my-4" />}
-        {answer && <Answer content={answer} />}
+        {enablePlayground && (
+          <>
+            <fetcher.Form method="post" action="/examples">
+              <Input type="hidden" name="example" value="basics" />
+              <div className="flex space-x-4">
+                <Input
+                  type="text"
+                  name="question"
+                  placeholder="What is love?"
+                  className="flex-grow p-2"
+                  onKeyDown={(e) => {
+                    const keyCode = e.which || e.keyCode;
+                    if (keyCode === 13) {
+                      fetcher.submit(e.currentTarget.form, {
+                        method: "POST",
+                      });
+                    }
+                  }}
+                />
+                <Button type="submit" className="p-2">
+                  Submit
+                </Button>
+              </div>
+            </fetcher.Form>
+            {isSubmitting && <LoadingIndicator className="my-4" />}
+            {answer && <Answer content={answer} />}
+          </>
+        )}
         {codeLoading ? (
           <LoadingIndicator className="my-4" />
         ) : codeError ? (

@@ -17,7 +17,11 @@ interface StructuredAnswer {
   output: string;
 }
 
-export function Structured() {
+interface StructuredProps {
+  enablePlayground: boolean;
+}
+
+export function Structured({ enablePlayground }: StructuredProps) {
   const fetcher = useFetcher<StructuredAnswer>();
   const [answer, setAnswer] = useState("");
   const { code, loading: codeLoading } = useExampleCode("structured");
@@ -40,30 +44,34 @@ export function Structured() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <fetcher.Form method="post" action="/examples">
-          <Input type="hidden" name="example" value="structured" />
-          <div className="flex space-x-4">
-            <Input
-              type="text"
-              name="ingredients"
-              placeholder="Peach, Flour, Eggs, Sugar"
-              className="flex-grow p-2"
-              onKeyDown={(e) => {
-                const keyCode = e.which || e.keyCode;
-                if (keyCode === 13) {
-                  fetcher.submit(e.currentTarget.form, {
-                    method: "POST",
-                  });
-                }
-              }}
-            />
-            <Button type="submit" className="p-2">
-              Generate Recipe
-            </Button>
-          </div>
-        </fetcher.Form>
-        {isSubmitting && <LoadingIndicator className="my-4" />}
-        {answer && <Answer content={`\`\`\` json\n${answer}\`\`\``} />}
+        {enablePlayground && (
+          <>
+            <fetcher.Form method="post" action="/examples">
+              <Input type="hidden" name="example" value="structured" />
+              <div className="flex space-x-4">
+                <Input
+                  type="text"
+                  name="ingredients"
+                  placeholder="Peach, Flour, Eggs, Sugar"
+                  className="flex-grow p-2"
+                  onKeyDown={(e) => {
+                    const keyCode = e.which || e.keyCode;
+                    if (keyCode === 13) {
+                      fetcher.submit(e.currentTarget.form, {
+                        method: "POST",
+                      });
+                    }
+                  }}
+                />
+                <Button type="submit" className="p-2">
+                  Generate Recipe
+                </Button>
+              </div>
+            </fetcher.Form>
+            {isSubmitting && <LoadingIndicator className="my-4" />}
+            {answer && <Answer content={`\`\`\` json\n${answer}\`\`\``} />}
+          </>
+        )}
         {codeLoading ? (
           <LoadingIndicator className="my-4" />
         ) : (
