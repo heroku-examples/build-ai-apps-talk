@@ -15,9 +15,10 @@ import { useEffect, useState } from "react";
 import { useFetcher } from "react-router";
 
 interface LangGraphAnswer {
-  firstAnswer: string;
-  secondAnswer: string;
+  firstAnswer?: string;
+  secondAnswer?: string;
   graph?: string;
+  error?: string;
 }
 
 interface LangGraphProps {
@@ -35,11 +36,12 @@ export function LangGraph({ enablePlayground }: LangGraphProps) {
 
   const isSubmitting = fetcher.state === "submitting";
   const response = fetcher.data;
+  const apiError = fetcher.data?.error;
 
   useEffect(() => {
     if (response) {
-      setFirstAnswer(response.firstAnswer);
-      setSecondAnswer(response.secondAnswer);
+      setFirstAnswer(response.firstAnswer || "");
+      setSecondAnswer(response.secondAnswer || "");
       if (response.graph) {
         setGraphImage(response.graph);
       }
@@ -61,7 +63,21 @@ export function LangGraph({ enablePlayground }: LangGraphProps) {
         <div className="space-y-4">
           {enablePlayground && (
             <>
-              <fetcher.Form method="post" action="/examples">
+              <fetcher.Form
+                method="post"
+                action="/examples"
+                onSubmit={(e) => {
+                  const formData = new FormData(e.currentTarget);
+                  const firstQuestion = formData.get("firstQuestion") as string;
+                  const secondQuestion = formData.get(
+                    "secondQuestion",
+                  ) as string;
+                  if (!firstQuestion?.trim() || !secondQuestion?.trim()) {
+                    e.preventDefault();
+                    return;
+                  }
+                }}
+              >
                 <div className="space-y-2">
                   <Input type="hidden" name="example" value="langraph" />
                   <div className="flex space-x-4">
@@ -95,6 +111,11 @@ export function LangGraph({ enablePlayground }: LangGraphProps) {
               </fetcher.Form>
 
               {isSubmitting && <LoadingIndicator className="my-4" />}
+              {apiError && (
+                <div className="my-4 p-4 bg-red-50 border border-red-200 rounded-md">
+                  <p className="text-red-600 text-sm">{apiError}</p>
+                </div>
+              )}
 
               {firstAnswer && (
                 <div className="space-y-2">

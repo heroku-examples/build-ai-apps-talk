@@ -15,8 +15,9 @@ import { useEffect, useState } from "react";
 import { useFetcher } from "react-router";
 
 interface SupervisorAnswer {
-  output: string;
+  output?: string;
   graph?: string;
+  error?: string;
 }
 
 interface SupervisorProps {
@@ -32,10 +33,11 @@ export function Supervisor({ enablePlayground }: SupervisorProps) {
 
   const isSubmitting = fetcher.state === "submitting";
   const response = fetcher.data;
+  const apiError = fetcher.data?.error;
 
   useEffect(() => {
     if (response) {
-      setAnswer(response.output);
+      setAnswer(response.output || "");
       if (response.graph) {
         setGraphImage(response.graph);
       }
@@ -55,7 +57,18 @@ export function Supervisor({ enablePlayground }: SupervisorProps) {
         <div className="space-y-4">
           {enablePlayground && (
             <>
-              <fetcher.Form method="post" action="/examples">
+              <fetcher.Form
+                method="post"
+                action="/examples"
+                onSubmit={(e) => {
+                  const formData = new FormData(e.currentTarget);
+                  const question = formData.get("question") as string;
+                  if (!question?.trim()) {
+                    e.preventDefault();
+                    return;
+                  }
+                }}
+              >
                 <div className="space-y-2">
                   <Input type="hidden" name="example" value="supervisor" />
                   <div className="flex space-x-4">
@@ -69,9 +82,16 @@ export function Supervisor({ enablePlayground }: SupervisorProps) {
                       onKeyDown={(e) => {
                         const keyCode = e.which || e.keyCode;
                         if (keyCode === 13) {
-                          fetcher.submit(e.currentTarget.form, {
-                            method: "POST",
-                          });
+                          const form = e.currentTarget.form;
+                          if (form) {
+                            const formData = new FormData(form);
+                            const question = formData.get("question") as string;
+                            if (question?.trim()) {
+                              fetcher.submit(form, {
+                                method: "POST",
+                              });
+                            }
+                          }
                         }
                       }}
                     />
@@ -87,6 +107,11 @@ export function Supervisor({ enablePlayground }: SupervisorProps) {
               </fetcher.Form>
 
               {isSubmitting && <LoadingIndicator className="my-4" />}
+              {apiError && (
+                <div className="my-4 p-4 bg-red-50 border border-red-200 rounded-md">
+                  <p className="text-red-600 text-sm">{apiError}</p>
+                </div>
+              )}
 
               {answer && (
                 <div className="space-y-2">

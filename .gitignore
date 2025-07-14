@@ -6,3 +6,5 @@
 build
 node_modules
 .react-router/
+.claude/
+CLAUDE.md

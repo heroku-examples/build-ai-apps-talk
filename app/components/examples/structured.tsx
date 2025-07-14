@@ -14,7 +14,8 @@ import { useExampleCode } from "@/utils/misc";
 import { useEffect, useState } from "react";
 import { useFetcher } from "react-router";
 interface StructuredAnswer {
-  output: string;
+  output?: string;
+  error?: string;
 }
 
 interface StructuredProps {
@@ -24,10 +25,12 @@ interface StructuredProps {
 export function Structured({ enablePlayground }: StructuredProps) {
   const fetcher = useFetcher<StructuredAnswer>();
   const [answer, setAnswer] = useState("");
+  const [ingredients, setIngredients] = useState("");
   const { code, loading: codeLoading } = useExampleCode("structured");
 
   const isSubmitting = fetcher.state === "submitting";
   const output = fetcher.data?.output;
+  const apiError = fetcher.data?.error;
 
   useEffect(() => {
     if (output) {
@@ -46,29 +49,60 @@ export function Structured({ enablePlayground }: StructuredProps) {
       <CardContent>
         {enablePlayground && (
           <>
-            <fetcher.Form method="post" action="/examples">
+            <fetcher.Form
+              method="post"
+              action="/examples"
+              onSubmit={(e) => {
+                const formData = new FormData(e.currentTarget);
+                const ingredients = formData.get("ingredients") as string;
+                if (!ingredients?.trim()) {
+                  e.preventDefault();
+                  return;
+                }
+              }}
+            >
               <Input type="hidden" name="example" value="structured" />
               <div className="flex space-x-4">
                 <Input
                   type="text"
                   name="ingredients"
+                  value={ingredients}
                   placeholder="Peach, Flour, Eggs, Sugar"
                   className="flex-grow p-2"
+                  onChange={(e) => setIngredients(e.currentTarget.value)}
                   onKeyDown={(e) => {
                     const keyCode = e.which || e.keyCode;
                     if (keyCode === 13) {
-                      fetcher.submit(e.currentTarget.form, {
-                        method: "POST",
-                      });
+                      const form = e.currentTarget.form;
+                      if (form) {
+                        const formData = new FormData(form);
+                        const ingredients = formData.get(
+                          "ingredients",
+                        ) as string;
+                        if (ingredients?.trim()) {
+                          fetcher.submit(form, {
+                            method: "POST",
+                          });
+                        }
+                      }
                     }
                   }}
                 />
-                <Button type="submit" className="p-2">
+                <Button
+                  type="submit"
+                  className="p-2"
+                  disabled={!ingredients.trim() || isSubmitting}
+                >
                   Generate Recipe
                 </Button>
               </div>
             </fetcher.Form>
             {isSubmitting && <LoadingIndicator className="my-4" />}
+            {apiError && (
+              <div className="my-4 p-4 bg-red-50 border border-red-200 rounded-md">
+                <p className="text-red-600 text-sm">{apiError}</p>
+              </div>
+            )}
             {answer && <Answer content={`\`\`\` json\n${answer}\`\`\``} />}
           </>
         )}

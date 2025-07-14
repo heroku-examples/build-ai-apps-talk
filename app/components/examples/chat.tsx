@@ -15,7 +15,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useFetcher } from "react-router";
 
 interface ChatAnswer {
-  output: string;
+  output?: string;
+  error?: string;
 }
 
 interface Message {
@@ -32,6 +33,7 @@ export function Chat({ enablePlayground }: ChatProps) {
   const fetcher = useFetcher<ChatAnswer>();
   const [messages, setMessages] = useState<Message[]>([]);
   const [message, setMessage] = useState<string>();
+  const [skill, setSkill] = useState<string>("");
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const { code, loading: codeLoading } = useExampleCode("chat");
 
@@ -57,13 +59,13 @@ export function Chat({ enablePlayground }: ChatProps) {
 
   const isSubmitting = fetcher.state === "submitting";
   const output = fetcher.data?.output;
+  const apiError = fetcher.data?.error;
 
   useEffect(() => {
     if (output) {
       handleAddMessage("system", output);
-      setTimeout(scrollToBottom, 100);
     }
-  }, [output, handleAddMessage, scrollToBottom]);
+  }, [output, handleAddMessage]);
 
   return (
     <Card className="w-full">
@@ -105,14 +107,30 @@ export function Chat({ enablePlayground }: ChatProps) {
               </div>
             )}
             {isSubmitting && <LoadingIndicator className="my-4" />}
-            <fetcher.Form method="post" action="/examples">
+            <fetcher.Form
+              method="post"
+              action="/examples"
+              onSubmit={(e) => {
+                const formData = new FormData(e.currentTarget);
+                const skill = formData.get("skill") as string;
+                const message = formData.get("message") as string;
+                if (!skill?.trim() || !message?.trim()) {
+                  e.preventDefault();
+                  return;
+                }
+                handleAddMessage("human", message);
+                setMessage("");
+              }}
+            >
               <Input type="hidden" name="example" value="chat" />
               <div className="flex space-x-4">
                 <Input
                   type="text"
                   name="skill"
+                  value={skill}
                   placeholder="RPG"
                   className="w-1/12 p-2"
+                  onChange={(e) => setSkill(e.currentTarget.value)}
                 />
                 <Input
                   type="text"
@@ -126,12 +144,18 @@ export function Chat({ enablePlayground }: ChatProps) {
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       e.preventDefault();
-                      if (message?.trim()) {
-                        handleAddMessage("human", message);
-                        fetcher.submit(e.currentTarget.form, {
-                          method: "POST",
-                        });
-                        setMessage("");
+                      const form = e.currentTarget.form;
+                      if (form) {
+                        const formData = new FormData(form);
+                        const skill = formData.get("skill") as string;
+                        const message = formData.get("message") as string;
+                        if (skill?.trim() && message?.trim()) {
+                          handleAddMessage("human", message);
+                          fetcher.submit(form, {
+                            method: "POST",
+                          });
+                          setMessage("");
+                        }
                       }
                     }
                   }}
@@ -139,6 +163,7 @@ export function Chat({ enablePlayground }: ChatProps) {
                 <Button
                   type="submit"
                   className="p-2"
+                  disabled={!skill.trim() || !message?.trim() || isSubmitting}
                   onClick={(e) => {
                     if (message?.trim()) {
                       handleAddMessage("human", message);
@@ -150,6 +175,11 @@ export function Chat({ enablePlayground }: ChatProps) {
                 </Button>
               </div>
             </fetcher.Form>
+            {apiError && (
+              <div className="my-4 p-4 bg-red-50 border border-red-200 rounded-md">
+                <p className="text-red-600 text-sm">{apiError}</p>
+              </div>
+            )}
           </>
         )}
         {codeLoading ? (

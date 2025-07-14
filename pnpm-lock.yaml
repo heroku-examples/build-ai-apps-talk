@@ -75,8 +75,8 @@ importers:
         specifier: 4.21.2
         version: 4.21.2
       heroku-langchain:
-        specifier: 0.2.1
-        version: 0.2.1(openai@5.1.0(ws@8.18.2)(zod@3.25.51))(zod@3.25.51)
+        specifier: 0.3.1
+        version: 0.3.1(openai@5.1.0(ws@8.18.2)(zod@3.25.51))(zod@3.25.51)
       ignore:
         specifier: ^5.3.2
         version: 5.3.2
@@ -978,6 +978,10 @@ packages:
 
   '@langchain/core@0.3.57':
     resolution: {integrity: sha512-jz28qCTKJmi47b6jqhQ6vYRTG5jRpqhtPQjriRTB5wR8mgvzo6xKs0fG/kExS3ZvM79ytD1npBvgf8i19xOo9Q==}
+    engines: {node: '>=18'}
+
+  '@langchain/core@0.3.62':
+    resolution: {integrity: sha512-GqRTcoUPnozGRMUcA6QkP7LHL/OvanGdB51Jgb0w7IIPDI3wFugxMHZ4gphnGDtxsD1tQY5ykyEpYNxFK8kl1w==}
     engines: {node: '>=18'}
 
   '@langchain/langgraph-checkpoint@0.0.18':
@@ -2351,8 +2355,8 @@ packages:
   hastscript@6.0.0:
     resolution: {integrity: sha512-nDM6bvd7lIqDUiYEiu5Sl/+6ReP0BMk/2f4U/Rooccxkj0P5nm+acM5PrGJ/t5I8qPGiqZSE6hVAwZEdZIvP4w==}
 
-  heroku-langchain@0.2.1:
-    resolution: {integrity: sha512-sGAHP5h9D2kiNeRex5GDGs7yf20vM68wNdAP1oUI3DXv5gb0Tr7MBPo+jEg99iCat5AdGHBcUB7lddjYI47Zvw==}
+  heroku-langchain@0.3.1:
+    resolution: {integrity: sha512-8f1mJzqnzkzU+KpidqYf5a0PShBPMvFL50oioxmdwc6zN8ZELHFvff27fj3h84eFJPFYtb3IKQqlsofPnmlaFQ==}
     engines: {node: '>=18.0.0'}
 
   highlight.js@10.7.3:
@@ -2618,6 +2622,23 @@ packages:
     peerDependencies:
       openai: '*'
     peerDependenciesMeta:
+      openai:
+        optional: true
+
+  langsmith@0.3.45:
+    resolution: {integrity: sha512-+LNOy/Uv0OWbtcsKHhrVenGLkS8CaM/9Vd2/95QzgQ54YokXlD9sH5LNRNRqxJAMt/NsqoIbZSoXj6rt96e8hw==}
+    peerDependencies:
+      '@opentelemetry/api': '*'
+      '@opentelemetry/exporter-trace-otlp-proto': '*'
+      '@opentelemetry/sdk-trace-base': '*'
+      openai: '*'
+    peerDependenciesMeta:
+      '@opentelemetry/api':
+        optional: true
+      '@opentelemetry/exporter-trace-otlp-proto':
+        optional: true
+      '@opentelemetry/sdk-trace-base':
+        optional: true
       openai:
         optional: true
 
@@ -4592,6 +4613,26 @@ snapshots:
     transitivePeerDependencies:
       - openai
 
+  '@langchain/core@0.3.62(openai@5.1.0(ws@8.18.2)(zod@3.25.51))':
+    dependencies:
+      '@cfworker/json-schema': 4.1.1
+      ansi-styles: 5.2.0
+      camelcase: 6.3.0
+      decamelize: 1.2.0
+      js-tiktoken: 1.0.19
+      langsmith: 0.3.45(openai@5.1.0(ws@8.18.2)(zod@3.25.51))
+      mustache: 4.2.0
+      p-queue: 6.6.2
+      p-retry: 4.6.2
+      uuid: 10.0.0
+      zod: 3.25.51
+      zod-to-json-schema: 3.24.5(zod@3.25.51)
+    transitivePeerDependencies:
+      - '@opentelemetry/api'
+      - '@opentelemetry/exporter-trace-otlp-proto'
+      - '@opentelemetry/sdk-trace-base'
+      - openai
+
   '@langchain/langgraph-checkpoint@0.0.18(@langchain/core@0.3.57(openai@5.1.0(ws@8.18.2)(zod@3.25.51)))':
     dependencies:
       '@langchain/core': 0.3.57(openai@5.1.0(ws@8.18.2)(zod@3.25.51))
@@ -6078,11 +6119,14 @@ snapshots:
       property-information: 5.6.0
       space-separated-tokens: 1.1.5
 
-  heroku-langchain@0.2.1(openai@5.1.0(ws@8.18.2)(zod@3.25.51))(zod@3.25.51):
+  heroku-langchain@0.3.1(openai@5.1.0(ws@8.18.2)(zod@3.25.51))(zod@3.25.51):
     dependencies:
-      '@langchain/core': 0.3.57(openai@5.1.0(ws@8.18.2)(zod@3.25.51))
+      '@langchain/core': 0.3.62(openai@5.1.0(ws@8.18.2)(zod@3.25.51))
       zod-to-json-schema: 3.24.5(zod@3.25.51)
     transitivePeerDependencies:
+      - '@opentelemetry/api'
+      - '@opentelemetry/exporter-trace-otlp-proto'
+      - '@opentelemetry/sdk-trace-base'
       - openai
       - zod
 
@@ -6330,6 +6374,18 @@ snapshots:
       - ws
 
   langsmith@0.3.29(openai@5.1.0(ws@8.18.2)(zod@3.25.51)):
+    dependencies:
+      '@types/uuid': 10.0.0
+      chalk: 4.1.2
+      console-table-printer: 2.14.1
+      p-queue: 6.6.2
+      p-retry: 4.6.2
+      semver: 7.7.2
+      uuid: 10.0.0
+    optionalDependencies:
+      openai: 5.1.0(ws@8.18.2)(zod@3.25.51)
+
+  langsmith@0.3.45(openai@5.1.0(ws@8.18.2)(zod@3.25.51)):
     dependencies:
       '@types/uuid': 10.0.0
       chalk: 4.1.2

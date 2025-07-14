@@ -83,119 +83,167 @@ export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
   const example = formData.get("example") as string;
 
-  if (example === "basics") {
-    const question = formData.get("question") as string;
-    const response = await getCompletion(question);
+  try {
+    if (example === "basics") {
+      const question = formData.get("question") as string;
+      if (!question?.trim()) {
+        return { error: "Please enter a question" };
+      }
+      const response = await getCompletion(question);
+      return {
+        output: response?.content,
+      };
+    }
+
+    if (example === "structured") {
+      const ingredients = formData.get("ingredients") as string;
+      if (!ingredients?.trim()) {
+        return { error: "Please enter ingredients" };
+      }
+      const output = await generateRecipe(ingredients);
+      return {
+        output: JSON.stringify(output, null, 2),
+      };
+    }
+
+    if (example === "chat") {
+      const skill = formData.get("skill") as string;
+      const message = formData.get("message") as string;
+      if (!skill?.trim() || !message?.trim()) {
+        return { error: "Please enter both skill and message" };
+      }
+      const output = await assistantQuestion({ skill, message });
+
+      return {
+        output,
+      };
+    }
+
+    if (example === "lcel") {
+      const language = formData.get("language") as string;
+      const problem = formData.get("problem") as string;
+      if (!language?.trim() || !problem?.trim()) {
+        return { error: "Please enter both language and problem" };
+      }
+      const output = await generateCode({ language, problem });
+      return {
+        output,
+      };
+    }
+
+    if (example === "agent") {
+      const question = formData.get("question") as string;
+      if (!question?.trim()) {
+        return { error: "Please enter a question" };
+      }
+      const result = await agentQuestion(question);
+      return result;
+    }
+
+    if (example === "rag-load") {
+      const repo = formData.get("repo") as string;
+      if (!repo?.trim()) {
+        return { error: "Please enter a repository URL" };
+      }
+      const repoData = await loadRepo(repo);
+      return repoData;
+    }
+
+    if (example === "rag") {
+      const question = formData.get("question") as string;
+      const repoUrl = formData.get("repoUrl") as string;
+      if (!question?.trim()) {
+        return { error: "Please enter a question" };
+      }
+      if (!repoUrl?.trim()) {
+        return { error: "Please select or load a repository first" };
+      }
+      const output = await askQuestion({ question, repoUrl });
+      return {
+        output,
+      };
+    }
+
+    if (example === "langraph") {
+      const firstQuestion = formData.get("firstQuestion") as string;
+      const secondQuestion = formData.get("secondQuestion") as string;
+      if (!firstQuestion?.trim() || !secondQuestion?.trim()) {
+        return { error: "Please enter both questions" };
+      }
+
+      const agent = await createAgent();
+      const threadId = randomUUID();
+      const firstAnswer = await askFirstQuestion(
+        agent,
+        firstQuestion,
+        threadId,
+      );
+      const secondAnswer = await askSecondQuestion(
+        agent,
+        secondQuestion,
+        threadId,
+      );
+      const graph = await generateGraph(agent);
+
+      return {
+        firstAnswer,
+        secondAnswer,
+        graph,
+      };
+    }
+
+    if (example === "supervisor") {
+      const question = formData.get("question") as string;
+      if (!question?.trim()) {
+        return { error: "Please enter a question" };
+      }
+      const output = await askSupervisorQuestion(question);
+      const graph = await generateSupervisorGraph();
+
+      return {
+        output,
+        graph,
+      };
+    }
+
+    if (example === "mcp") {
+      const question = formData.get("question") as string;
+      if (!question?.trim()) {
+        return { error: "Please enter a question" };
+      }
+      const output = await mcpAskQuestion(question);
+      const graph = await mcpGenerateGraph();
+      return {
+        output,
+        graph,
+      };
+    }
+
+    if (example === "rag-repos") {
+      const repositories = await getRepositories();
+      return repositories;
+    }
+
+    if (example === "multi-agent") {
+      const city = formData.get("city") as string;
+      if (!city?.trim()) {
+        return { error: "Please enter a city name" };
+      }
+      const result = await runMultiAgent(city);
+      return {
+        output: result.messages.map(
+          (msg: AIMessage | HumanMessage) => msg.content,
+        ),
+        graph: result.graph,
+      };
+    }
+
+    return new Response("Not Found", { status: 404 });
+  } catch (error) {
+    console.error(`Error in ${example} example:`, error);
     return {
-      output: response?.content,
+      error:
+        error instanceof Error ? error.message : "An unexpected error occurred",
     };
   }
-
-  if (example === "structured") {
-    const ingredients = formData.get("ingredients") as string;
-    const output = await generateRecipe(ingredients);
-    return {
-      output: JSON.stringify(output, null, 2),
-    };
-  }
-
-  if (example === "chat") {
-    const skill = formData.get("skill") as string;
-    const message = formData.get("message") as string;
-    const output = await assistantQuestion({ skill, message });
-
-    return {
-      output,
-    };
-  }
-
-  if (example === "lcel") {
-    const language = formData.get("language") as string;
-    const problem = formData.get("problem") as string;
-    const output = await generateCode({ language, problem });
-    return {
-      output,
-    };
-  }
-
-  if (example === "agent") {
-    const question = formData.get("question") as string;
-    const result = await agentQuestion(question);
-    return result;
-  }
-
-  if (example === "rag-load") {
-    const repo = formData.get("repo") as string;
-    const repoData = await loadRepo(repo);
-    return repoData;
-  }
-
-  if (example === "rag") {
-    const question = formData.get("question") as string;
-    const repoUrl = formData.get("repoUrl") as string;
-    const output = await askQuestion({ question, repoUrl });
-    return {
-      output,
-    };
-  }
-
-  if (example === "langraph") {
-    const firstQuestion = formData.get("firstQuestion") as string;
-    const secondQuestion = formData.get("secondQuestion") as string;
-
-    const agent = await createAgent();
-    const threadId = randomUUID();
-    const firstAnswer = await askFirstQuestion(agent, firstQuestion, threadId);
-    const secondAnswer = await askSecondQuestion(
-      agent,
-      secondQuestion,
-      threadId,
-    );
-    const graph = await generateGraph(agent);
-
-    return {
-      firstAnswer,
-      secondAnswer,
-      graph,
-    };
-  }
-
-  if (example === "supervisor") {
-    const question = formData.get("question") as string;
-    const output = await askSupervisorQuestion(question);
-    const graph = await generateSupervisorGraph();
-
-    return {
-      output,
-      graph,
-    };
-  }
-
-  if (example === "mcp") {
-    const question = formData.get("question") as string;
-    const output = await mcpAskQuestion(question);
-    const graph = await mcpGenerateGraph();
-    return {
-      output,
-      graph,
-    };
-  }
-
-  if (example === "rag-repos") {
-    const repositories = await getRepositories();
-    return repositories;
-  }
-
-  if (example === "multi-agent") {
-    const city = formData.get("city") as string;
-    const result = await runMultiAgent(city);
-    return {
-      output: result.messages.map(
-        (msg: AIMessage | HumanMessage) => msg.content,
-      ),
-      graph: result.graph,
-    };
-  }
-
-  return new Response("Not Found", { status: 404 });
 }

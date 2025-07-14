@@ -15,7 +15,8 @@ import { useEffect, useState } from "react";
 import { useFetcher } from "react-router";
 
 interface LCELAnswer {
-  output: string;
+  output?: string;
+  error?: string;
 }
 
 const PROGRAMMING_LANGUAGES = [
@@ -41,6 +42,7 @@ export function LCEL({ enablePlayground }: LCELProps) {
   const fetcher = useFetcher<LCELAnswer>();
   const [answer, setAnswer] = useState("");
   const [language, setLanguage] = useState("JavaScript");
+  const [problem, setProblem] = useState("");
   const {
     code,
     loading: codeLoading,
@@ -49,6 +51,7 @@ export function LCEL({ enablePlayground }: LCELProps) {
 
   const isSubmitting = fetcher.state === "submitting";
   const output = fetcher.data?.output;
+  const apiError = fetcher.data?.error;
 
   useEffect(() => {
     if (output) {
@@ -67,7 +70,18 @@ export function LCEL({ enablePlayground }: LCELProps) {
       <CardContent>
         {enablePlayground && (
           <>
-            <fetcher.Form method="post" action="/examples">
+            <fetcher.Form
+              method="post"
+              action="/examples"
+              onSubmit={(e) => {
+                const formData = new FormData(e.currentTarget);
+                const problem = formData.get("problem") as string;
+                if (!problem?.trim()) {
+                  e.preventDefault();
+                  return;
+                }
+              }}
+            >
               <Input type="hidden" name="example" value="lcel" />
               <div className="flex space-x-4">
                 <select
@@ -85,15 +99,26 @@ export function LCEL({ enablePlayground }: LCELProps) {
                 <Input
                   type="text"
                   name="problem"
+                  value={problem}
                   placeholder="Reverse a string"
                   className="flex-grow p-2"
+                  onChange={(e) => setProblem(e.currentTarget.value)}
                 />
-                <Button type="submit" className="p-2">
+                <Button
+                  type="submit"
+                  className="p-2"
+                  disabled={!problem.trim() || isSubmitting}
+                >
                   Generate Code
                 </Button>
               </div>
             </fetcher.Form>
             {isSubmitting && <LoadingIndicator className="my-4" />}
+            {apiError && (
+              <div className="my-4 p-4 bg-red-50 border border-red-200 rounded-md">
+                <p className="text-red-600 text-sm">{apiError}</p>
+              </div>
+            )}
             {answer && <Answer content={answer} />}
           </>
         )}

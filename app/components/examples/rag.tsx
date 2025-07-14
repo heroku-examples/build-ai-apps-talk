@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useExampleCode } from "@/utils/misc";
 import { IconBrandGithub } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useFetcher } from "react-router";
 
 interface RepoData {
@@ -22,7 +22,8 @@ interface RepoData {
 }
 
 interface RAGAnswer {
-  output: string;
+  output?: string;
+  error?: string;
 }
 
 interface RagProps {
@@ -43,6 +44,7 @@ export function Rag({ enablePlayground }: RagProps) {
 
   const isSubmitting = questionFetcher.state === "submitting";
   const questionOutput = questionFetcher.data?.output;
+  const apiError = questionFetcher.data?.error;
 
   const isRepoSubmitting = repoFetcher.state === "submitting";
   const repoOutput = repoFetcher.data;
@@ -55,17 +57,21 @@ export function Rag({ enablePlayground }: RagProps) {
     }
   }, [questionOutput]);
 
+  const refreshRepositoriesRef = useRef(() => {
+    reposFetcher.submit(
+      { example: "rag-repos" },
+      { method: "POST", action: "/examples" },
+    );
+  });
+
   useEffect(() => {
     if (repoOutput) {
       setRepoData(repoOutput);
       setRepoUrl(repoOutput.repoUrl);
       // Refresh the repositories list when a new repo is loaded
-      reposFetcher.submit(
-        { example: "rag-repos" },
-        { method: "POST", action: "/examples" },
-      );
+      refreshRepositoriesRef.current();
     }
-  }, [repoOutput, reposFetcher.submit]);
+  }, [repoOutput]);
 
   useEffect(() => {
     if (reposOutput) {
@@ -75,11 +81,8 @@ export function Rag({ enablePlayground }: RagProps) {
 
   useEffect(() => {
     // Fetch repositories when component mounts
-    reposFetcher.submit(
-      { example: "rag-repos" },
-      { method: "POST", action: "/examples" },
-    );
-  }, [reposFetcher.submit]);
+    refreshRepositoriesRef.current();
+  }, []);
 
   const formatRepoUrl = (input: string) => {
     // Remove any existing GitHub URL prefix
@@ -225,8 +228,7 @@ export function Rag({ enablePlayground }: RagProps) {
                           setQuestion(e.currentTarget.value);
                         }}
                         onKeyDown={(e) => {
-                          const keyCode = e.which || e.keyCode;
-                          if (keyCode === 13) {
+                          if (e.key === "Enter") {
                             setAnswer("");
                             questionFetcher.submit(e.currentTarget.form, {
                               method: "POST",
@@ -237,7 +239,7 @@ export function Rag({ enablePlayground }: RagProps) {
                       <Button
                         type="submit"
                         className="p-2"
-                        disabled={isSubmitting}
+                        disabled={!question.trim() || isSubmitting}
                       >
                         Ask
                       </Button>
@@ -246,6 +248,11 @@ export function Rag({ enablePlayground }: RagProps) {
                 )}
               </div>
               {isSubmitting && <LoadingIndicator className="my-4" />}
+              {apiError && (
+                <div className="my-4 p-4 bg-red-50 border border-red-200 rounded-md">
+                  <p className="text-red-600 text-sm">{apiError}</p>
+                </div>
+              )}
               {answer && <Answer content={answer} />}
             </>
           )}

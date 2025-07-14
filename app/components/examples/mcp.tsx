@@ -15,8 +15,9 @@ import { useEffect, useState } from "react";
 import { useFetcher } from "react-router";
 
 interface MCPAnswer {
-  output: string;
+  output?: string;
   graph?: string;
+  error?: string;
 }
 
 interface MCPProps {
@@ -33,6 +34,7 @@ export function MCP({ enablePlayground }: MCPProps) {
   const isSubmitting = fetcher.state === "submitting";
   const output = fetcher.data?.output;
   const graph = fetcher.data?.graph;
+  const apiError = fetcher.data?.error;
   useEffect(() => {
     if (output) {
       setAnswer(output);
@@ -57,7 +59,19 @@ export function MCP({ enablePlayground }: MCPProps) {
         <div className="space-y-4">
           {enablePlayground && (
             <>
-              <fetcher.Form method="post" action="/examples">
+              <fetcher.Form
+                method="post"
+                action="/examples"
+                onSubmit={(e) => {
+                  const formData = new FormData(e.currentTarget);
+                  const question = formData.get("question") as string;
+                  if (!question?.trim()) {
+                    e.preventDefault();
+                    return;
+                  }
+                  setAnswer("");
+                }}
+              >
                 <Input type="hidden" name="example" value="mcp" />
                 <div className="flex space-x-4">
                   <Input
@@ -72,19 +86,35 @@ export function MCP({ enablePlayground }: MCPProps) {
                     onKeyDown={(e) => {
                       const keyCode = e.which || e.keyCode;
                       if (keyCode === 13) {
-                        setAnswer("");
-                        fetcher.submit(e.currentTarget.form, {
-                          method: "POST",
-                        });
+                        const form = e.currentTarget.form;
+                        if (form) {
+                          const formData = new FormData(form);
+                          const question = formData.get("question") as string;
+                          if (question?.trim()) {
+                            setAnswer("");
+                            fetcher.submit(form, {
+                              method: "POST",
+                            });
+                          }
+                        }
                       }
                     }}
                   />
-                  <Button type="submit" className="p-2">
+                  <Button
+                    type="submit"
+                    className="p-2"
+                    disabled={!question.trim() || isSubmitting}
+                  >
                     Ask
                   </Button>
                 </div>
               </fetcher.Form>
               {isSubmitting && <LoadingIndicator className="my-4" />}
+              {apiError && (
+                <div className="my-4 p-4 bg-red-50 border border-red-200 rounded-md">
+                  <p className="text-red-600 text-sm">{apiError}</p>
+                </div>
+              )}
               {answer && <Answer content={answer} />}
               {graphImage && (
                 <div className="space-y-2">

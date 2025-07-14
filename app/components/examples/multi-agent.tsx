@@ -15,8 +15,9 @@ import { useEffect, useState } from "react";
 import { useFetcher } from "react-router";
 
 interface MultiAgentAnswer {
-  output: string[];
-  graph: string;
+  output?: string[];
+  graph?: string;
+  error?: string;
 }
 
 interface MultiAgentProps {
@@ -27,11 +28,13 @@ export function MultiAgent({ enablePlayground }: MultiAgentProps) {
   const fetcher = useFetcher<MultiAgentAnswer>();
   const [answers, setAnswers] = useState<string[]>([]);
   const [graph, setGraph] = useState<string>("");
+  const [city, setCity] = useState("");
   const { code, loading: codeLoading } = useExampleCode("multi-agent");
 
   const isSubmitting = fetcher.state === "submitting";
   const output = fetcher.data?.output;
   const graphOutput = fetcher.data?.graph;
+  const apiError = fetcher.data?.error;
 
   useEffect(() => {
     if (output) {
@@ -53,31 +56,62 @@ export function MultiAgent({ enablePlayground }: MultiAgentProps) {
       <CardContent>
         {enablePlayground && (
           <>
-            <fetcher.Form method="post" action="/examples">
+            <fetcher.Form
+              method="post"
+              action="/examples"
+              onSubmit={(e) => {
+                const formData = new FormData(e.currentTarget);
+                const city = formData.get("city") as string;
+                if (!city?.trim()) {
+                  e.preventDefault();
+                  return;
+                }
+                setAnswers([]);
+                setGraph("");
+              }}
+            >
               <Input type="hidden" name="example" value="multi-agent" />
               <div className="flex space-x-4">
                 <Input
                   type="text"
                   name="city"
+                  value={city}
                   placeholder="Enter a city name (e.g., New York, London, Tokyo)"
                   className="flex-grow p-2"
+                  onChange={(e) => setCity(e.currentTarget.value)}
                   onKeyDown={(e) => {
                     const keyCode = e.which || e.keyCode;
                     if (keyCode === 13) {
-                      setAnswers([]);
-                      setGraph("");
-                      fetcher.submit(e.currentTarget.form, {
-                        method: "POST",
-                      });
+                      const form = e.currentTarget.form;
+                      if (form) {
+                        const formData = new FormData(form);
+                        const city = formData.get("city") as string;
+                        if (city?.trim()) {
+                          setAnswers([]);
+                          setGraph("");
+                          fetcher.submit(form, {
+                            method: "POST",
+                          });
+                        }
+                      }
                     }
                   }}
                 />
-                <Button type="submit" className="p-2">
+                <Button
+                  type="submit"
+                  className="p-2"
+                  disabled={!city.trim() || isSubmitting}
+                >
                   Analyze
                 </Button>
               </div>
             </fetcher.Form>
             {isSubmitting && <LoadingIndicator className="my-4" />}
+            {apiError && (
+              <div className="my-4 p-4 bg-red-50 border border-red-200 rounded-md">
+                <p className="text-red-600 text-sm">{apiError}</p>
+              </div>
+            )}
             {answers.length > 0 && (
               <div className="space-y-4 my-4">
                 {answers.map((answer) => (
