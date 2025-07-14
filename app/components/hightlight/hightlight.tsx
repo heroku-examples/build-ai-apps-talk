@@ -1,8 +1,8 @@
-import { useLoaded } from "@/utils/misc";
 import { IconCheck, IconCopy } from "@tabler/icons-react";
 import { useState } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vs } from "react-syntax-highlighter/dist/cjs/styles/prism";
+import { useLoaded } from "@/utils/misc";
 
 interface HighlightProps {
   language:
@@ -52,7 +52,7 @@ export const Highlight = ({ language, children }: HighlightProps) => {
     try {
       // Try using the Clipboard API first
       await navigator.clipboard.writeText(text);
-    } catch (err) {
+    } catch (_err) {
       // Fallback to the old method
       const textarea = document.createElement("textarea");
       textarea.value = text;

@@ -1,3 +1,6 @@
+import { IconBrandGithub } from "@tabler/icons-react";
+import { useEffect, useRef, useState } from "react";
+import { useFetcher } from "react-router";
 import { Answer } from "@/components/answer/answer";
 import { Highlight } from "@/components/hightlight/hightlight";
 import { LoadingIndicator } from "@/components/loading-indicator";
@@ -11,9 +14,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useExampleCode } from "@/utils/misc";
-import { IconBrandGithub } from "@tabler/icons-react";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useFetcher } from "react-router";
 
 interface RepoData {
   repoUrl: string;

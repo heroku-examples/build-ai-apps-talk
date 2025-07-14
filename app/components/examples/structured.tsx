@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import { useFetcher } from "react-router";
 import { Answer } from "@/components/answer/answer";
 import { Highlight } from "@/components/hightlight/hightlight";
 import { LoadingIndicator } from "@/components/loading-indicator";
@@ -11,8 +13,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useExampleCode } from "@/utils/misc";
-import { useEffect, useState } from "react";
-import { useFetcher } from "react-router";
+
 interface StructuredAnswer {
   output?: string;
   error?: string;

@@ -1,3 +1,5 @@
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useFetcher } from "react-router";
 import { Answer } from "@/components/answer/answer";
 import { Highlight } from "@/components/hightlight/hightlight";
 import { LoadingIndicator } from "@/components/loading-indicator";
@@ -11,8 +13,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useExampleCode } from "@/utils/misc";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useFetcher } from "react-router";
 
 interface ChatAnswer {
   output?: string;
@@ -164,7 +164,7 @@ export function Chat({ enablePlayground }: ChatProps) {
                   type="submit"
                   className="p-2"
                   disabled={!skill.trim() || !message?.trim() || isSubmitting}
-                  onClick={(e) => {
+                  onClick={(_e) => {
                     if (message?.trim()) {
                       handleAddMessage("human", message);
                       setMessage("");

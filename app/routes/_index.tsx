@@ -1,3 +1,6 @@
+import { useState } from "react";
+import type { MetaFunction } from "react-router";
+import { useLoaderData } from "react-router";
 import { Agent } from "@/components/examples/agent";
 import { Basics } from "@/components/examples/basics";
 import { Chat } from "@/components/examples/chat";
@@ -10,9 +13,6 @@ import { Structured } from "@/components/examples/structured";
 import { Supervisor } from "@/components/examples/supervisor";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { title } from "@/config.shared";
-import { useState } from "react";
-import type { LoaderFunctionArgs, MetaFunction } from "react-router";
-import { useLoaderData } from "react-router";
 
 export const meta: MetaFunction = () => {
   return [
@@ -25,7 +25,7 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader() {
   const enablePlayground = process.env.ENABLE_PLAYGROUND === "true";
   return { enablePlayground };
 }

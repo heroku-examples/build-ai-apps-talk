@@ -1,3 +1,4 @@
+import type { MetaFunction } from "react-router";
 import {
   Card,
   CardContent,
@@ -6,7 +7,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { title } from "@/config.shared";
-import type { MetaFunction } from "react-router";
 
 export const meta: MetaFunction = () => {
   return [
@@ -147,7 +147,7 @@ export default function Resources() {
       </div>
 
       <div className="grid gap-8">
-        {resourceSections.map((section, sectionIndex) => (
+        {resourceSections.map((section, _sectionIndex) => (
           <div key={section.title} className="space-y-4">
             <div className="mb-6">
               <h2 className="text-2xl font-semibold text-gray-900 mb-2">
@@ -157,7 +157,7 @@ export default function Resources() {
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {section.resources.map((resource, resourceIndex) => (
+              {section.resources.map((resource, _resourceIndex) => (
                 <Card
                   key={resource.title}
                   className="transition-all duration-200 hover:shadow-lg hover:scale-[1.02] cursor-pointer group"

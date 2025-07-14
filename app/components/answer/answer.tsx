@@ -1,7 +1,7 @@
-import { Highlight } from "@/components/hightlight/hightlight";
 import type { HTMLAttributes } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { Highlight } from "@/components/hightlight/hightlight";
 
 interface AnswerProps {
   content: string;
