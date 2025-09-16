@@ -75,7 +75,7 @@ export default function Index() {
 
         {/* Mobile Overlay */}
         {mobileMenuOpen && (
-          <div
+          <button
             className="md:hidden fixed inset-0 bg-black/50 z-40"
             onClick={() => setMobileMenuOpen(false)}
             onKeyDown={(e) => {
@@ -84,7 +84,7 @@ export default function Index() {
               }
             }}
             tabIndex={0}
-            role="button"
+            type="button"
             aria-label="Close menu"
           />
         )}
