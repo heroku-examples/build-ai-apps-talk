@@ -10,9 +10,9 @@ import {
   START,
   StateGraph,
 } from "@langchain/langgraph";
-import { HerokuMia } from "heroku-langchain";
+import { ChatHeroku } from "heroku-langchain";
 
-const model = new HerokuMia({});
+const model = new ChatHeroku({});
 
 function fetchWeatherAgent(city) {
   return async (state) => {

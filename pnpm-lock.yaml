@@ -75,8 +75,8 @@ importers:
         specifier: 4.21.2
         version: 4.21.2
       heroku-langchain:
-        specifier: 0.3.1
-        version: 0.3.1(openai@5.9.0(ws@8.18.3)(zod@3.25.76))(zod@3.25.76)
+        specifier: 0.4.0
+        version: 0.4.0(openai@5.9.0(ws@8.18.3)(zod@3.25.76))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(zod@3.25.76)
       ignore:
         specifier: ^5.3.2
         version: 5.3.2
@@ -1445,9 +1445,6 @@ packages:
   '@types/node@18.19.118':
     resolution: {integrity: sha512-hIPK0hSrrcaoAu/gJMzN3QClXE4QdCdFvaenJ0JsjIbExP1JFFVH+RHcBt25c9n8bx5dkIfqKE+uw6BmBns7ug==}
 
-  '@types/node@22.15.29':
-    resolution: {integrity: sha512-LNdjOkUDlU1RZb8e1kOIUpN1qQUlzGkEtbVNo53vbrwDg5om6oduhm4SiUaPW5ASTXhAiP0jInWG8Qx9fVlOeQ==}
-
   '@types/node@24.0.13':
     resolution: {integrity: sha512-Qm9OYVOFHFYg3wJoTSrz80hoec5Lia/dPp84do3X7dZvLikQvM1YpmvTBEdIr/e+U8HTkFjLHLnl78K/qjf+jQ==}
 
@@ -2179,8 +2176,8 @@ packages:
   hastscript@6.0.0:
     resolution: {integrity: sha512-nDM6bvd7lIqDUiYEiu5Sl/+6ReP0BMk/2f4U/Rooccxkj0P5nm+acM5PrGJ/t5I8qPGiqZSE6hVAwZEdZIvP4w==}
 
-  heroku-langchain@0.3.1:
-    resolution: {integrity: sha512-8f1mJzqnzkzU+KpidqYf5a0PShBPMvFL50oioxmdwc6zN8ZELHFvff27fj3h84eFJPFYtb3IKQqlsofPnmlaFQ==}
+  heroku-langchain@0.4.0:
+    resolution: {integrity: sha512-3BYpqj1ncMl8lkwA8ENqeBmyXSh7CLmxkBINIkDt6xWa278+kGZhfBXrhVUnY2ETRTdoCrnMIhTeWlvnk4uTIg==}
     engines: {node: '>=18.0.0'}
 
   highlight.js@10.7.3:
@@ -3486,9 +3483,6 @@ packages:
   undici-types@5.26.5:
     resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
 
-  undici-types@6.21.0:
-    resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
-
   undici-types@7.8.0:
     resolution: {integrity: sha512-9UJ2xGDvQ43tYyVMpuHlsgApydB8ZKfVYTsLDhXkFL/6gfkp+U8xTGdh8pMJv1SpZna0zxG1DwsKZsreLbXBxw==}
 
@@ -4664,16 +4658,12 @@ snapshots:
 
   '@types/node-fetch@2.6.12':
     dependencies:
-      '@types/node': 22.15.29
+      '@types/node': 24.0.13
       form-data: 4.0.3
 
   '@types/node@18.19.118':
     dependencies:
       undici-types: 5.26.5
-
-  '@types/node@22.15.29':
-    dependencies:
-      undici-types: 6.21.0
 
   '@types/node@24.0.13':
     dependencies:
@@ -5493,15 +5483,18 @@ snapshots:
       property-information: 5.6.0
       space-separated-tokens: 1.1.5
 
-  heroku-langchain@0.3.1(openai@5.9.0(ws@8.18.3)(zod@3.25.76))(zod@3.25.76):
+  heroku-langchain@0.4.0(openai@5.9.0(ws@8.18.3)(zod@3.25.76))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(zod@3.25.76):
     dependencies:
       '@langchain/core': 0.3.62(openai@5.9.0(ws@8.18.3)(zod@3.25.76))
+      '@langchain/langgraph': 0.3.8(@langchain/core@0.3.62(openai@5.9.0(ws@8.18.3)(zod@3.25.76)))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(zod-to-json-schema@3.24.6(zod@3.25.76))
       zod-to-json-schema: 3.24.6(zod@3.25.76)
     transitivePeerDependencies:
       - '@opentelemetry/api'
       - '@opentelemetry/exporter-trace-otlp-proto'
       - '@opentelemetry/sdk-trace-base'
       - openai
+      - react
+      - react-dom
       - zod
 
   highlight.js@10.7.3: {}
@@ -6988,8 +6981,6 @@ snapshots:
   typescript@5.8.3: {}
 
   undici-types@5.26.5: {}
-
-  undici-types@6.21.0: {}
 
   undici-types@7.8.0: {}
 

@@ -13,7 +13,7 @@ A modern web application demonstrating how to build AI-powered applications usin
 
 - Node.js (v20 or higher)
 - pnpm package manager
-- Heroku Managed Inference and Agents Add-on: `Claude-3-7-Sonnet` and `Cohere-Embed-Multilingual` (for RAG example)
+- Heroku Managed Inference and Agents Add-on: `gpt-oss-120b` and `Cohere-Embed-Multilingual` (for RAG example)
 - LangSmith API key (optional for tracing)
 - PostgreSQL with pgvector support (for RAG example)
 - OpenWeather API key (for Agent example)
@@ -79,7 +79,7 @@ The application will be available at `http://localhost:3000`
 3. Add Managed Inference and Agents Add-on:
 
     ```shell
-    heroku ai:models:create claude-3-7-sonnet --as INFERENCE
+    heroku ai:models:create gpt-oss-120b --as INFERENCE
     heroku ai:models:create cohere-embed-multilingual --as EMBEDDING
     ```
 

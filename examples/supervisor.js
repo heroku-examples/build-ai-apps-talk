@@ -7,9 +7,9 @@ import {
   START,
   StateGraph,
 } from "@langchain/langgraph";
-import { HerokuMia } from "heroku-langchain";
+import { ChatHeroku } from "heroku-langchain";
 
-const model = new HerokuMia({ temperature: 0 });
+const model = new ChatHeroku({ temperature: 0 });
 
 // Define the state for the supervisor graph
 const SupervisorState = Annotation.Root({

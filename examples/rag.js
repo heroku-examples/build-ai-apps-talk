@@ -3,7 +3,7 @@ import { GithubRepoLoader } from "@langchain/community/document_loaders/web/gith
 import { PGVectorStore } from "@langchain/community/vectorstores/pgvector";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
-import { HerokuMia, HerokuMiaEmbeddings } from "heroku-langchain";
+import { ChatHeroku, HerokuEmbeddings } from "heroku-langchain";
 import { createStuffDocumentsChain } from "langchain/chains/combine_documents";
 import { createRetrievalChain } from "langchain/chains/retrieval";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
@@ -33,7 +33,7 @@ async function setupPgVector() {
   };
 
   const pgVectorStore = await PGVectorStore.initialize(
-    new HerokuMiaEmbeddings(),
+    new HerokuEmbeddings(),
     pgOptions,
   );
 
@@ -131,7 +131,7 @@ export async function loadRepo(repoUrl) {
 // Ask a question about the repository
 export async function askQuestion({ question, repoUrl }) {
   // Create a chat model that will be used to answer the questions
-  const llm = new HerokuMia({
+  const llm = new ChatHeroku({
     temperature: 0,
   });
 

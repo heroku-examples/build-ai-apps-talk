@@ -1,10 +1,10 @@
 import "dotenv/config";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
-import { HerokuMia } from "heroku-langchain";
+import { ChatHeroku } from "heroku-langchain";
 import { z } from "zod";
 
 // Create an instance of a LLM
-const llm = new HerokuMia({
+const llm = new ChatHeroku({
   temperature: 0,
 });
 

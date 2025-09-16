@@ -6,10 +6,10 @@ import {
   MessagesPlaceholder,
 } from "@langchain/core/prompts";
 import { RunnableWithMessageHistory } from "@langchain/core/runnables";
-import { HerokuMia } from "heroku-langchain";
+import { ChatHeroku } from "heroku-langchain";
 
 // Instantiate the chat model
-const llm = new HerokuMia({
+const llm = new ChatHeroku({
   temperature: 0,
 });
 

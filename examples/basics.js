@@ -1,8 +1,8 @@
 import "dotenv/config";
-import { HerokuMia } from "heroku-langchain";
+import { ChatHeroku } from "heroku-langchain";
 
 // Create an instance of a LLM
-const llm = new HerokuMia({
+const llm = new ChatHeroku({
   temperature: 0.5,
 });
 

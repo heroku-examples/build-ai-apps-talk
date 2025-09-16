@@ -4,9 +4,9 @@ import { createReactAgent } from "@langchain/langgraph/prebuilt";
 import { loadMcpTools } from "@langchain/mcp-adapters";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
-import { HerokuMia } from "heroku-langchain";
+import { ChatHeroku } from "heroku-langchain";
 
-const model = new HerokuMia();
+const model = new ChatHeroku();
 
 const transport = new StdioClientTransport({
   command: "npx",

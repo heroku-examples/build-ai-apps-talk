@@ -2,11 +2,11 @@ import "dotenv/config";
 import { HumanMessage } from "@langchain/core/messages";
 import { MemorySaver } from "@langchain/langgraph";
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
-import { HerokuMia, HerokuMiaEmbeddings } from "heroku-langchain";
+import { ChatHeroku, HerokuEmbeddings } from "heroku-langchain";
 import { WebBrowser } from "langchain/tools/webbrowser";
 
-const model = new HerokuMia();
-const embeddings = new HerokuMiaEmbeddings();
+const model = new ChatHeroku();
+const embeddings = new HerokuEmbeddings();
 const browser = new WebBrowser({ model, embeddings });
 
 const checkpointer = new MemorySaver();
